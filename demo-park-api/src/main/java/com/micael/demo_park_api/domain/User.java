@@ -3,11 +3,10 @@ package com.micael.demo_park_api.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.AnyDiscriminatorImplicitValues;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
+
 
 @Entity
 @Table(name = "users_tb")
@@ -21,7 +20,7 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_user;
+    private Long idUser;
 
     @Column(unique = true, nullable = false, length = 100)
     private String username;
@@ -50,18 +49,18 @@ public class User implements Serializable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id_user, user.id_user);
+        return Objects.equals(idUser, user.idUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id_user);
+        return Objects.hashCode(idUser);
     }
 
     @Override
     public String toString() {
         return "User{" +
-            "id_user=" + id_user +
+            "id_user=" + idUser +
             '}';
     }
 }
