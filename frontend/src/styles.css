@@ -1,0 +1,484 @@
+/* ===================== Cultiva — estilos ===================== */
+:root{
+  --verde:#2e7d32; --verde-claro:#4caf50; --verde-escuro:#1b5e20;
+  --terra:#6d4c2f; --bg:#f4f7f1; --card:#ffffff; --texto:#243124;
+  --cinza:#7a857a; --borda:#dfe6da; --sombra:0 1px 3px rgba(0,0,0,.08);
+  --excelente:#2e7d32; --bom:#7cb342; --atencao:#f9a825; --critico:#e53935;
+}
+*{box-sizing:border-box}
+/* Ícone de emoji consistente (Twemoji). Dimensiona em 1em → herda o font-size do
+   contexto, então encaixa onde antes havia o emoji de texto, sem mexer nos tamanhos. */
+.emoji-icon{width:1em; height:1em; display:inline-block; vertical-align:-0.125em; object-fit:contain}
+.emoji-fallback{display:inline-block; line-height:1}
+body{
+  margin:0; font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg);
+  color:var(--texto); font-size:14px;
+}
+button{font-family:inherit; cursor:pointer}
+
+/* Shell de altura fixa: header no topo + área de conteúdo rolável */
+html, body, #root { height: 100%; }
+.shell { height: 100vh; display: flex; flex-direction: column; }
+.shell > header { flex: 0 0 auto; }
+.shell-main { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+
+/* Cabeçalho */
+header{
+  background:linear-gradient(120deg,var(--verde-escuro),var(--verde));
+  color:#fff; padding:10px 18px; display:flex; align-items:center; gap:14px;
+  box-shadow:var(--sombra); position:sticky; top:0; z-index:20;
+}
+header h1{font-size:18px; margin:0; font-weight:700; letter-spacing:.3px}
+header h1 span{opacity:.8; font-weight:400; font-size:13px}
+nav.tabs{display:flex; gap:6px; margin-left:18px}
+nav.tabs button{background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.25);
+  padding:6px 14px; border-radius:7px; font-size:13.5px; font-weight:600}
+nav.tabs button.active{background:#fff; color:var(--verde-escuro); border-color:#fff}
+nav.tabs button:hover:not(.active){background:rgba(255,255,255,.25)}
+.header-actions{margin-left:auto; display:flex; gap:8px}
+.header-actions button{
+  background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.3);
+  padding:6px 12px; border-radius:6px; font-size:13px;
+}
+.header-actions button:hover{background:rgba(255,255,255,.28)}
+
+/* Layout principal */
+.app{display:grid; grid-template-columns:230px 1fr 320px; gap:14px; padding:14px; align-items:start}
+@media(max-width:1100px){
+  .app{grid-template-columns:1fr}
+  /* Evita o "blowout" do grid: a coluna 1fr tem min-width:auto implícito, então a grade
+     larga (#grid width:max-content) empurraria a página para a direita. min-width:0 deixa
+     as colunas encolherem; a grade rola DENTRO do .field-wrap. (frente A — overflow mobile) */
+  .app > .left, .app > .center, .app > .right{ min-width:0; }
+  .field-wrap{ max-width:100%; }
+}
+/* Planejador: ocupa a viewport inteira; barra superior enquadrada (fixa) e SEM
+   rolagem de página. Só as LATERAIS rolam; o CENTRO (horta + linha do tempo) fica
+   todo enquadrado (em telas ≥ 1101px). */
+@media(min-width:1101px){
+  .planner-screen{ height:100%; display:flex; flex-direction:column; overflow:hidden; }
+  .planner-screen .planner-bar, .planner-screen .alerts-bar{ flex:0 0 auto; }
+  .planner-screen .app{ flex:1 1 auto; min-height:0; align-items:stretch; overflow:hidden; }
+  /* laterais rolam */
+  .planner-screen .app > .left,
+  .planner-screen .app > .right{ max-height:100%; overflow-y:auto; overflow-x:hidden; }
+  /* centro: enquadrado, sem rolagem da coluna */
+  .planner-screen .app > .center{ min-height:0; overflow:hidden; display:flex; flex-direction:column; }
+  .planner-screen .app > .center > .card:first-child{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; }
+  .planner-screen .app > .center > .card:first-child > .body{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; }
+  .planner-screen .app > .center .field-wrap{ flex:1 1 auto; min-height:0; }   /* a grade rola aqui dentro só se for maior que a área */
+  .planner-screen .app > .center > .card:last-child{ flex:0 0 auto; margin-bottom:0; }
+}
+
+.card{background:var(--card); border:1px solid var(--borda); border-radius:10px; box-shadow:var(--sombra); margin-bottom:14px}
+.card h2{font-size:13px; text-transform:uppercase; letter-spacing:.5px; color:var(--verde-escuro);
+  margin:0; padding:12px 14px; border-bottom:1px solid var(--borda)}
+.card .body{padding:12px 14px}
+
+/* Ferramentas */
+.tool-grid{display:grid; grid-template-columns:1fr 1fr; gap:6px}
+.tool-grid button{
+  display:flex; flex-direction:column; align-items:center; gap:3px; padding:10px 4px;
+  border:1px solid var(--borda); background:#fff; border-radius:8px; font-size:12px; color:var(--texto);
+}
+.tool-grid button .ico{font-size:20px}
+.tool-grid button.active{background:var(--verde); color:#fff; border-color:var(--verde)}
+.tool-grid button:hover:not(.active){background:#eef5ec}
+
+label.field{display:block; font-size:12px; color:var(--cinza); margin:10px 0 3px}
+select, input[type=range], input[type=number]{width:100%; padding:6px; border:1px solid var(--borda);
+  border-radius:6px; background:#fff; font-size:13px}
+input[type=range]{padding:0}
+
+.amend-list{display:flex; flex-wrap:wrap; gap:5px; margin-top:6px}
+.amend-list button{font-size:11px; padding:4px 7px; border:1px solid var(--borda); background:#fff;
+  border-radius:14px}
+.amend-list button.on{background:var(--terra); color:#fff; border-color:var(--terra)}
+
+.crop-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:5px; max-height:340px; overflow:auto}
+.crop-grid button{display:flex; flex-direction:column; align-items:center; gap:2px; padding:7px 2px;
+  border:1px solid var(--borda); background:#fff; border-radius:8px; font-size:10.5px; line-height:1.1}
+.crop-grid button .ico{font-size:20px}
+.crop-grid button.active{background:var(--verde-claro); color:#fff; border-color:var(--verde-claro)}
+
+.swatch{display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-1px; margin-right:4px}
+.muted{color:var(--cinza); font-size:12px}
+.hint{font-size:11.5px; color:var(--cinza); margin-top:8px; line-height:1.4}
+
+/* Dosagem de insumos */
+.amend-dose{border:1px solid var(--borda); border-radius:8px; padding:7px 9px; margin-top:7px; background:#fbfcfa}
+.amend-dose .head{display:flex; justify-content:space-between; align-items:center; font-size:12.5px; font-weight:600}
+.amend-dose .head button{border:0; background:none; color:var(--critico); font-size:14px; cursor:pointer; line-height:1}
+.amend-dose .dose-row{display:flex; align-items:center; gap:8px; margin-top:5px}
+.amend-dose .dose-row input[type=range]{flex:1}
+.amend-dose .dose-val{font-size:12px; min-width:74px; text-align:right; font-variant-numeric:tabular-nums}
+.amend-dose .rec{font-size:10.5px; color:var(--cinza); margin-top:3px}
+.amend-dose.warn{border-color:var(--atencao); background:#fffdf3}
+
+/* Resultado simulado do solo */
+.soil-preview{margin-top:10px; border-top:1px dashed var(--borda); padding-top:9px}
+.metric{margin:5px 0}
+.metric .lab{display:flex; justify-content:space-between; font-size:11.5px; color:var(--cinza)}
+.metric .lab b{color:var(--texto)}
+.risk{font-size:11.5px; background:#fdf1f1; border-left:3px solid var(--critico); padding:5px 8px;
+  border-radius:0 5px 5px 0; margin-top:6px; line-height:1.35}
+
+/* Terreno / layout */
+.dim-row{display:flex; gap:8px}
+.dim-row > div{flex:1}
+.btn-apply{width:100%; margin-top:10px; padding:7px; border:1px solid var(--verde); background:var(--verde);
+  color:#fff; border-radius:7px; font-size:13px}
+.btn-apply:hover{background:var(--verde-escuro)}
+
+/* Card-resumo de ambiente (abre modal) */
+.env-card{cursor:pointer; transition:box-shadow .12s}
+.env-card:hover{box-shadow:0 0 0 2px var(--verde-claro)}
+.env-card h2 .gear{float:right; opacity:.7}
+.env-row{display:flex; justify-content:space-between; padding:4px 0; font-size:12.5px; border-bottom:1px solid #f0f2ee}
+.env-row:last-of-type{border:0}
+.env-row span{color:var(--cinza)}
+.env-cta{margin-top:8px; font-size:11.5px; color:var(--verde); text-align:center}
+
+/* Modal flutuante */
+.modal-overlay{position:fixed; inset:0; background:rgba(20,30,20,.5); backdrop-filter:blur(2px);
+  display:flex; align-items:center; justify-content:center; z-index:50; padding:16px}
+.modal{background:var(--card); border-radius:12px; width:min(640px,100%); max-height:90vh; overflow:auto;
+  box-shadow:0 12px 40px rgba(0,0,0,.3); animation:modalIn .15s ease}
+@keyframes modalIn{from{opacity:0; transform:translateY(8px) scale(.98)} to{opacity:1; transform:none}}
+.modal-head{display:flex; align-items:center; justify-content:space-between; padding:14px 18px;
+  border-bottom:1px solid var(--borda); position:sticky; top:0; background:var(--card)}
+.modal-head h2{margin:0; font-size:16px; color:var(--verde-escuro)}
+.modal-close{border:0; background:#eef1ea; width:30px; height:30px; border-radius:8px; font-size:15px; cursor:pointer}
+.modal-close:hover{background:#dfe6da}
+.modal-body{padding:16px 18px}
+.modal-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+@media(max-width:560px){ .modal-grid{grid-template-columns:1fr} }
+
+/* Clima & temperatura */
+.clima-tab{width:100%; border-collapse:collapse; margin-top:8px; font-size:11.5px}
+.clima-tab th{font-weight:600; color:var(--cinza); text-align:center; padding:2px; font-size:10.5px}
+.clima-tab td{padding:2px; text-align:center}
+.clima-tab td:first-child{text-align:left; color:var(--texto)}
+.clima-tab input{width:46px; padding:3px 2px; border:1px solid var(--borda); border-radius:5px; text-align:center; font-size:11.5px}
+.clima-tab .frost input{border-color:#9ec5e8; background:#f0f7fd}
+
+/* Navegação da linha do tempo */
+.time-nav{display:flex; gap:6px; margin-top:8px}
+.time-nav button{flex:1; padding:5px 4px; border:1px solid var(--borda); background:#fff; border-radius:6px; font-size:12px}
+.time-nav button:hover{background:#eef5ec}
+.month-ticks{display:flex; justify-content:space-between; font-size:9px; color:var(--cinza); margin-top:6px; padding:0 2px}
+
+/* Campo (grade) */
+.field-wrap{overflow:auto}
+#grid{display:grid; gap:2px; background:var(--borda); padding:2px; border-radius:8px; width:max-content;
+  margin:0 auto}
+.cell{position:relative; width:38px; height:38px; border-radius:4px; background:#eef1ea;
+  display:flex; align-items:center; justify-content:center; font-size:19px; cursor:pointer;
+  user-select:none; transition:transform .05s}
+.cell.bed{outline:1px solid rgba(0,0,0,.06)}
+.cell:hover{transform:scale(1.06); z-index:2; box-shadow:0 0 0 2px var(--verde)}
+.cell.sel{box-shadow:0 0 0 2px var(--verde-escuro)}
+.cell .health{position:absolute; bottom:2px; left:3px; right:3px; height:3px; border-radius:2px; background:rgba(0,0,0,.12)}
+.cell .health i{display:block; height:100%; border-radius:2px}
+.cell .stage{position:absolute; top:1px; right:2px; font-size:9px}
+.cell.empty-bed{font-size:10px; color:#b9c2b3}
+.cell.lost{outline:2px dashed #b33; outline-offset:-2px}
+.cell.in-sel{outline:3px solid #1565c0; outline-offset:-3px; box-shadow:inset 0 0 0 9999px rgba(33,150,243,.32), 0 0 0 2px rgba(33,150,243,.55); z-index:1; animation:cellPulse 1.4s ease-in-out infinite}
+.cell.in-sel::after{content:'✓'; position:absolute; top:1px; left:2px; font-size:11px; font-weight:700; color:#fff; background:#1565c0; border-radius:3px; padding:0 3px; line-height:13px}
+@keyframes cellPulse{0%,100%{box-shadow:inset 0 0 0 9999px rgba(33,150,243,.32), 0 0 0 2px rgba(33,150,243,.55)} 50%{box-shadow:inset 0 0 0 9999px rgba(33,150,243,.45), 0 0 0 3px rgba(33,150,243,.85)}}
+#grid.select-mode .cell{cursor:crosshair}
+#grid.select-mode .cell.bed:not(.in-sel){box-shadow:inset 0 0 0 1px rgba(33,150,243,.35)}
+
+/* Painel de solo — barra de aplicação e seleção múltipla */
+.soil-apply-bar{display:flex; gap:6px; align-items:stretch; margin-bottom:8px}
+.btn-apply-all{flex:1; padding:8px 10px; background:var(--verde); color:#fff; border:0; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; line-height:1.2}
+.btn-apply-all:hover{background:var(--verde-escuro)}
+.btn-pencil{min-width:44px; padding:0 12px; border:1px solid var(--borda); background:#fff; border-radius:8px; font-size:18px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; line-height:1}
+.btn-pencil.on{background:#e3f2fd; border-color:#2196f3; box-shadow:0 0 0 2px rgba(33,150,243,.2)}
+.soil-select-status{display:flex; gap:6px; align-items:center; flex-wrap:wrap; padding:8px 10px; margin-bottom:8px; background:#e3f2fd; border:1px solid #90caf9; border-radius:8px; font-size:12px}
+.btn-apply-sel{padding:6px 10px; background:#1976d2; color:#fff; border:0; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer}
+.btn-apply-sel:disabled{background:#b0bec5; cursor:not-allowed}
+.soil-select-status .ghost{padding:6px 10px; font-size:12px}
+.soil-select-status .ghost:disabled{opacity:.5; cursor:not-allowed}
+
+.legend{display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; font-size:12px; color:var(--cinza)}
+.legend b{display:inline-block; width:11px; height:11px; border-radius:3px; vertical-align:-1px; margin-right:3px}
+
+/* Linha do tempo */
+.time-row{display:flex; align-items:center; gap:12px}
+.time-row .day{font-weight:700; color:var(--verde-escuro); min-width:120px}
+.time-row input[type=range]{flex:1}
+
+/* Painel direito */
+.kpi-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.kpi{background:#f3f7f1; border:1px solid var(--borda); border-radius:8px; padding:9px 10px}
+.kpi .v{font-size:20px; font-weight:700; color:var(--verde-escuro)}
+.kpi .l{font-size:11px; color:var(--cinza)}
+
+.bar{height:10px; border-radius:5px; background:#e7ece4; overflow:hidden; margin:4px 0 2px}
+.bar i{display:block; height:100%}
+
+.sugg{border-left:3px solid var(--atencao); background:#fffdf3; padding:8px 10px; border-radius:0 6px 6px 0;
+  margin-bottom:8px; font-size:12.5px}
+.sugg.crit{border-color:var(--critico); background:#fdf1f1}
+.sugg.ok{border-color:var(--excelente); background:#f1f8f1}
+.sugg .t{font-weight:600; display:block; margin-bottom:2px}
+.sugg .n{color:var(--cinza); font-size:11px}
+
+.harvest-item{display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px dashed var(--borda); font-size:12.5px}
+.harvest-item:last-child{border:0}
+.tag{display:inline-block; font-size:10px; padding:1px 6px; border-radius:10px; color:#fff}
+
+.empty-state{color:var(--cinza); font-size:12.5px; text-align:center; padding:18px 8px; line-height:1.5}
+
+.inspect-row{display:flex; justify-content:space-between; padding:3px 0; font-size:12.5px; border-bottom:1px solid #f0f2ee}
+.inspect-row span:first-child{color:var(--cinza)}
+
+/* ===================== Guia das culturas ===================== */
+.guide-wrap{display:grid; grid-template-columns:230px 1fr; gap:14px; padding:14px; align-items:start}
+@media(max-width:900px){
+  .guide-wrap{grid-template-columns:1fr}
+  /* Especificidade maior (.guide-wrap .x) p/ vencer a regra base .guide-list, que vem
+     DEPOIS no arquivo e, com igual especificidade, sobrescreveria este reset — fazendo a
+     lista continuar 'sticky' no mobile (ícones flutuando, conteúdo rolando atrás). */
+  .guide-wrap .guide-list, .guide-wrap .concept-aside{position:static; top:auto; max-height:none; overflow:visible}
+  #conceptListItems{overflow:visible}
+}
+.guide-list{background:var(--card); border:1px solid var(--borda); border-radius:10px; box-shadow:var(--sombra);
+  padding:8px; display:grid; grid-template-columns:1fr 1fr; gap:6px; position:sticky; top:64px;
+  max-height:calc(100vh - 86px); overflow-y:auto}
+.guide-list button{display:flex; flex-direction:column; align-items:center; gap:2px; padding:9px 3px;
+  border:1px solid var(--borda); background:#fff; border-radius:9px; font-size:11px; color:var(--texto); line-height:1.1}
+.guide-list button .ico{font-size:24px}
+.guide-list button.active{background:var(--verde); color:#fff; border-color:var(--verde)}
+.guide-list button:hover:not(.active){background:#eef5ec}
+
+.guide-detail{background:var(--card); border:1px solid var(--borda); border-radius:10px; box-shadow:var(--sombra); overflow:hidden}
+.gd-head{background:linear-gradient(120deg,var(--verde-escuro),var(--verde-claro)); color:#fff; padding:18px 22px; display:flex; align-items:center; gap:16px}
+.gd-head .em{font-size:54px; line-height:1}
+.gd-head h2{margin:0; font-size:24px}
+.gd-head .sub{opacity:.9; font-size:13px; margin-top:3px}
+.gd-chips{display:flex; flex-wrap:wrap; gap:7px; padding:14px 22px 4px}
+.gd-chip{background:#eef5ec; border:1px solid var(--borda); border-radius:16px; padding:4px 11px; font-size:12px; color:var(--verde-escuro)}
+.gd-body{padding:8px 22px 22px}
+.gd-sec{margin-top:16px}
+.gd-sec h3{font-size:13px; text-transform:uppercase; letter-spacing:.5px; color:var(--verde-escuro);
+  margin:0 0 7px; padding-bottom:5px; border-bottom:2px solid #eef1ea}
+.gd-sec p{margin:0; line-height:1.55; font-size:13.5px}
+.gd-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+@media(max-width:620px){ .gd-grid{grid-template-columns:1fr} }
+.gd-row{display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid #f0f2ee; font-size:13px}
+.gd-row span{color:var(--cinza)} .gd-row b{text-align:right}
+.gd-avoid{list-style:none; padding:0; margin:0}
+.gd-avoid li{background:#fdf1f1; border-left:3px solid var(--critico); padding:7px 11px; border-radius:0 6px 6px 0;
+  margin-bottom:7px; font-size:13px; line-height:1.4}
+.gd-tags{display:flex; flex-wrap:wrap; gap:6px}
+.gd-tag{font-size:12px; padding:3px 9px; border-radius:14px; color:#fff}
+.gd-dica{background:#f1f8f1; border-left:3px solid var(--bom); padding:9px 12px; border-radius:0 6px 6px 0; font-size:13px; line-height:1.45}
+.link-guide{display:inline-block; margin-top:8px; background:var(--verde); color:#fff; border:0; padding:6px 11px; border-radius:6px; font-size:12px; cursor:pointer}
+
+/* ===================== Acordeão (Guia/Conceitos no mobile) ===================== */
+/* Lista expansível: cada item abre o detalhe inline (em vez de jogar o detalhe lá no
+   fim da página). Um aberto por vez. Escala bem com muitas culturas/tópicos. (frente A) */
+.accordion{display:flex; flex-direction:column; gap:8px; padding:14px}
+.accordion input[type=search]{width:100%; padding:10px 12px; border:1px solid var(--borda); border-radius:8px; font-size:16px}
+.acc-item{border:1px solid var(--borda); border-radius:10px; background:var(--card); box-shadow:var(--sombra); overflow:hidden}
+.acc-header{width:100%; display:flex; align-items:center; gap:12px; padding:14px; background:#fff; border:0;
+  text-align:left; font-size:14.5px; color:var(--texto); cursor:pointer; min-height:52px}
+.acc-header .ico{font-size:26px; line-height:1}
+.acc-header .acc-name{flex:1; display:flex; flex-direction:column; gap:1px; font-weight:600}
+.acc-header .acc-name .acc-sub{font-weight:400; font-size:11.5px; color:var(--cinza)}
+.acc-header .chev{color:var(--cinza); font-size:16px; transition:transform .2s}
+.acc-item.open .acc-header{background:var(--verde); color:#fff}
+.acc-item.open .acc-header .acc-name .acc-sub{color:rgba(255,255,255,.85)}
+.acc-item.open .acc-header .chev{transform:rotate(180deg); color:#fff}
+.acc-body{border-top:1px solid var(--borda)}
+/* o detalhe (gd-*) já vem sem o card externo, então encaixa direto no corpo do item */
+.acc-body .gd-head{border-radius:0}
+.link-guide:hover{background:var(--verde-escuro)}
+
+/* ===================== Conceitos (glossário, estilo do Guia) ===================== */
+/* lista lateral com altura limitada e rolagem própria: não gera altura extra na página */
+.concept-aside{display:flex !important; flex-direction:column; overflow:hidden}  /* sobrescreve o grid 2-col */
+#conceptSearch{width:100%; padding:9px 12px; border:1px solid var(--borda); border-radius:8px; font-size:13px; margin-bottom:8px; flex-shrink:0}
+#conceptListItems{overflow-y:auto; flex:1 1 auto; min-height:0}
+#conceptSearch:focus{outline:none; border-color:var(--verde-claro); box-shadow:0 0 0 2px #e0efe0}
+.concept-item{display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:9px 10px;
+  border:1px solid var(--borda); background:#fff; border-radius:9px; margin-bottom:6px; cursor:pointer; color:var(--texto)}
+.concept-item .ci-ico{font-size:20px; flex-shrink:0}
+.concept-item .ci-txt b{display:block; font-size:12.5px; line-height:1.2}
+.concept-item .ci-txt small{color:var(--cinza); font-size:10.5px}
+.concept-item.active{background:var(--verde); border-color:var(--verde)}
+.concept-item.active .ci-txt b{color:#fff}
+.concept-item.active .ci-txt small{color:rgba(255,255,255,.8)}
+.concept-item:hover:not(.active){background:#eef5ec}
+.concept-empty{text-align:center; color:var(--cinza); padding:14px; font-size:13px}
+
+/* tipos de solo e blocos "como medir" no detalhe do conceito */
+.gd-tipo{padding:7px 0; border-bottom:1px solid #f0f2ee; font-size:13.5px; line-height:1.5}
+.gd-tipo:last-child{border:0}
+.gd-tipo b{color:var(--verde-escuro)}
+.medir-blk{border-radius:8px; padding:9px 12px; margin-top:8px}
+.medir-blk.caseiro{background:#f1f8f1; border-left:3px solid var(--bom)}
+.medir-blk.prof{background:#eef4fb; border-left:3px solid #4a86c7}
+.medir-tag{display:block; font-weight:600; font-size:12px; margin-bottom:5px; color:var(--texto)}
+.medir-blk ul{margin:0; padding-left:18px}
+.medir-blk li{font-size:13px; line-height:1.5; margin-bottom:5px}
+.medir-blk li:last-child{margin-bottom:0}
+
+/* ===================== Telas do app real (auth, projetos, planner) ===================== */
+.auth-wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#e8f1e3,#d3e6cc); padding:16px}
+.auth-card{background:#fff; border:1px solid var(--borda); border-radius:14px; box-shadow:0 8px 30px rgba(0,0,0,.12); padding:26px 24px; width:min(380px,100%)}
+.auth-card h1{margin:0; color:var(--verde-escuro); font-size:26px}
+.auth-card > .muted{margin:2px 0 14px}
+.auth-toggle{display:flex; gap:6px; margin-bottom:8px}
+.auth-toggle button{flex:1; padding:8px; border:1px solid var(--borda); background:#fff; border-radius:8px; font-size:13px; cursor:pointer}
+.auth-toggle button.on{background:var(--verde); color:#fff; border-color:var(--verde)}
+.auth-card input{width:100%; padding:9px 11px; border:1px solid var(--borda); border-radius:8px; font-size:14px}
+.auth-card .btn-apply{margin-top:14px}
+.auth-err{background:#fdf1f1; border-left:3px solid var(--critico); color:#a12; padding:8px 11px; border-radius:0 6px 6px 0; font-size:13px; margin-top:10px}
+.field-err{display:block; color:var(--critico); font-size:12px; margin-top:3px}
+
+.projects-wrap{max-width:760px; margin:0 auto; padding:18px}
+.projects-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
+.projects-head h2{color:var(--verde-escuro); margin:0}
+.projects-head .btn-apply{width:auto; margin:0}
+.project-list{display:flex; flex-direction:column; gap:10px}
+.project-card{display:flex; align-items:center; background:var(--card); border:1px solid var(--borda); border-radius:10px; box-shadow:var(--sombra); overflow:hidden}
+.project-card .pc-main{flex:1; padding:14px 16px; cursor:pointer}
+.project-card .pc-main:hover{background:#f6faf4}
+.project-card .pc-main b{display:block; font-size:15px}
+.project-card .pc-main small{color:var(--cinza); font-size:12px}
+.project-card .pc-del{border:0; background:none; font-size:17px; padding:0 16px; cursor:pointer; align-self:stretch}
+.project-card .pc-del:hover{background:#fdf1f1}
+
+.planner-bar{display:flex; align-items:center; gap:12px; padding:8px 14px; background:#fff; border-bottom:1px solid var(--borda)}
+.planner-bar b{font-size:14px}
+button.ghost{background:#eef1ea; border:1px solid var(--borda); padding:6px 12px; border-radius:7px; font-size:13px; cursor:pointer}
+button.ghost:hover{background:#e2e9dd}
+
+/* Cabeçalho do bloco de Layout com data + clima à direita */
+.card h2.layout-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.layout-weather{font-size:11.5px; font-weight:400; color:var(--cinza); text-transform:none; letter-spacing:0; display:inline-flex; align-items:center; gap:4px; flex-wrap:wrap}
+.layout-weather small{color:var(--cinza)}
+.layout-weather em{font-style:normal; padding:1px 7px; border-radius:10px; background:#eef1ea; color:var(--cinza)}
+.layout-weather em.real{background:#e6f0fb; color:#2c6cb0}
+
+/* Banner de alertas no topo do planner */
+.alerts-bar{display:flex; flex-direction:column; gap:6px; padding:8px 14px; background:#fff8e1; border-bottom:1px solid #f0e2b0}
+.alert-item{display:flex; align-items:center; gap:8px; font-size:13px}
+.alert-item .a-ic{font-size:16px}
+.alert-item.frost{color:#1c5fa8}
+.alert-item.water{color:#9a6a00}
+.alert-item .a-msg{flex:1}
+.alert-item .a-x{border:0; background:none; cursor:pointer; color:var(--cinza); font-size:14px}
+.alert-item .a-x:hover{color:var(--critico)}
+
+/* Linha de frequência/duração do insumo */
+.amend-dose .freq-row{display:flex; align-items:center; gap:6px; margin-top:6px; font-size:11.5px; color:var(--cinza); flex-wrap:wrap}
+.amend-dose .freq-row select{width:auto; padding:3px 6px; font-size:11.5px}
+.amend-dose .freq-row input{width:52px; padding:3px 5px; font-size:11.5px}
+.amend-dose .dose-val small{color:var(--cinza); font-weight:400}
+
+/* Esconde as barras de rolagem dos painéis laterais (mantém a rolagem funcional) */
+.app > .left, .app > .center, .app > .right,
+.guide-list, .concept-aside, #conceptListItems {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* Edge/IE legado */
+}
+.app > .left::-webkit-scrollbar, .app > .center::-webkit-scrollbar, .app > .right::-webkit-scrollbar,
+.guide-list::-webkit-scrollbar, .concept-aside::-webkit-scrollbar,
+#conceptListItems::-webkit-scrollbar {
+  width: 0; height: 0; display: none;   /* Chrome/Edge/Safari */
+}
+
+/* Botão "Editar canteiro" no canto inferior direito do bloco de layout */
+.edit-open{margin-left:auto; border:1px solid var(--verde); background:#fff; color:var(--verde-escuro);
+  padding:5px 11px; border-radius:7px; font-size:12px; cursor:pointer; font-weight:600}
+.edit-open:hover{background:var(--verde); color:#fff}
+
+/* Modo edição do canteiro em tela cheia */
+.edit-overlay{position:fixed; inset:0; z-index:60; background:var(--bg); display:flex; flex-direction:column}
+.edit-bar{display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:10px 16px; background:#fff;
+  border-bottom:1px solid var(--borda); box-shadow:var(--sombra)}
+.edit-bar > b{font-size:15px; color:var(--verde-escuro)}
+.edit-tools{display:flex; gap:6px}
+.edit-tools button{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; border:1px solid var(--borda);
+  background:#fff; border-radius:8px; font-size:12.5px; color:var(--texto); cursor:pointer}
+.edit-tools button.active{background:var(--verde); color:#fff; border-color:var(--verde)}
+.edit-tools button:hover:not(.active){background:#eef5ec}
+.edit-dims{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--cinza)}
+.edit-dims button{width:26px; height:26px; border:1px solid var(--borda); background:#fff; border-radius:6px; cursor:pointer; font-size:14px}
+.edit-dims button:hover{background:#eef5ec}
+.edit-dims b{min-width:20px; text-align:center; color:var(--texto)}
+.edit-main{flex:1 1 auto; min-height:0; display:flex; overflow:hidden}
+.edit-aside{width:260px; flex:0 0 260px; overflow-y:auto; padding:10px; border-right:1px solid var(--borda); background:#fafcf9}
+.edit-aside .card{margin-bottom:0}
+.edit-grid{flex:1 1 auto; overflow:auto; padding:18px; display:flex; align-items:flex-start; justify-content:center}
+
+/* Barras de rolagem do canteiro (navegação de horta grande) — estilizadas */
+.field-wrap, .edit-grid{ scrollbar-width: thin; scrollbar-color: #b9cdb0 transparent; }  /* Firefox */
+.field-wrap::-webkit-scrollbar, .edit-grid::-webkit-scrollbar{ width:11px; height:11px; }
+.field-wrap::-webkit-scrollbar-track, .edit-grid::-webkit-scrollbar-track{ background:transparent; }
+.field-wrap::-webkit-scrollbar-thumb, .edit-grid::-webkit-scrollbar-thumb{
+  background:#b9cdb0; border-radius:8px; border:3px solid transparent; background-clip:content-box; }
+.field-wrap::-webkit-scrollbar-thumb:hover, .edit-grid::-webkit-scrollbar-thumb:hover{ background:var(--verde-claro); }
+.field-wrap::-webkit-scrollbar-corner, .edit-grid::-webkit-scrollbar-corner{ background:transparent; }
+
+/* ===================== Responsivo / mobile ===================== */
+/* O layout principal (.app) já empilha em 1 coluna ≤1100px. Aqui ajustamos o "chrome"
+   que era desktop-first e estourava no celular: cabeçalho, barras e editor de canteiro.
+   Tudo dentro de max-width → o desktop (e o planejador "enquadrado" ≥1101px) fica intacto. */
+@media (max-width: 768px){
+  /* a página inteira não rola na horizontal; as áreas largas (grade) rolam por dentro */
+  html, body{ overflow-x:hidden; }
+
+  /* Cabeçalho em 2 linhas: título + ações em cima; abas roláveis embaixo */
+  header{ flex-wrap:wrap; gap:8px 10px; padding:8px 12px; }
+  header h1{ font-size:16px; }
+  nav.tabs{ order:3; width:100%; margin-left:0; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px; }
+  nav.tabs button{ flex:0 0 auto; white-space:nowrap; padding:6px 11px; font-size:12.5px; }
+  .header-actions{ margin-left:auto; gap:6px; }
+  .header-actions button{ padding:6px 10px; font-size:12px; }
+
+  /* Barra do planejador: deixa quebrar em linhas em vez de estourar */
+  .planner-bar{ flex-wrap:wrap; gap:8px; padding:8px 12px; }
+  .planner-bar .muted{ margin-left:auto; }
+
+  /* Editor de canteiro em tela cheia: painel acima da grade (empilhado) */
+  .edit-main{ flex-direction:column; }
+  .edit-aside{ width:100%; flex:0 0 auto; max-height:42vh; border-right:0; border-bottom:1px solid var(--borda); }
+  .edit-grid{ padding:12px; }
+
+  /* Cabeçalho de projetos e modal mais confortáveis no toque */
+  .projects-head{ flex-wrap:wrap; gap:10px; }
+  .projects-wrap{ padding:14px; }
+  .modal-overlay{ padding:8px; }
+  .modal{ max-height:94vh; }
+}
+
+@media (max-width: 480px){
+  .header-actions > span{ display:none; }   /* esconde o nome do usuário p/ caber */
+  nav.tabs{ gap:4px; }
+  /* alvos de toque maiores nos botões principais */
+  .btn-apply, button.ghost, .time-nav button, nav.tabs button, .tool-grid button{ min-height:40px; }
+
+  /* Tabela de clima: cabe na largura do celular. Inputs ocupam a célula e usam 16px
+     (abaixo disso o iOS dá zoom automático ao focar). table-layout fixo evita estouro. */
+  .clima-tab{ table-layout:fixed; font-size:12px; }
+  .clima-tab th{ font-size:11px; }
+  .clima-tab input{ width:100%; min-width:0; font-size:16px; padding:6px 2px; }
+
+  /* Grade de culturas: 3 colunas ficam apertadas demais → 2 colunas, fonte legível */
+  .crop-grid{ grid-template-columns:repeat(2, 1fr); }
+  .crop-grid button{ font-size:12px; min-height:44px; }
+
+  /* Linha do tempo: o rótulo do dia não precisa de min-width fixo no celular */
+  .time-row .day{ min-width:0; }
+}
+
+/* Em telas sem hover real (toque), o efeito de :hover da célula "gruda" após o tap.
+   Neutraliza o realce de hover só nesses aparelhos; o desktop continua igual. */
+@media (hover: none){
+  .cell:hover{ transform:none; box-shadow:none; }
+}
