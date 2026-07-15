@@ -30,6 +30,7 @@ public class ApiExceptionHandler {
 
     }
 
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorMessage> handleHttpRequestMethodNotSupportedException(
         HttpRequestMethodNotSupportedException ex,

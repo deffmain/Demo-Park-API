@@ -32,20 +32,20 @@ public class UserService {
             return userRepository.save(newUser);
         }
         catch (org.springframework.dao.DataIntegrityViolationException ex){
-            throw new UsernameUniqueViolationException(String.format("Usuário {%s} já cadastrado", user.username()));
+            throw new UsernameUniqueViolationException(String.format("Usuário {%s} já cadastrado.", user.username()));
         }
     }
 
     @Transactional(readOnly = true)
-    public User encontrarPorId(Long id){
-        return userRepository.findById(id)
-            .orElseThrow(()-> new EntityNotFoundException(String.format("Usuário com id = %s não encontrado", id)));
+    public User encontrarPorId(Long idUser){
+        return userRepository.findById(idUser)
+            .orElseThrow(()-> new EntityNotFoundException(String.format("Usuário com id = %s não encontrado.", idUser)));
     }
 
     @Transactional
-    public User alterarCredenciais(Long id, PasswordDTO password){
+    public User alterarCredenciais(Long idUser, PasswordDTO password){
 
-      User userPass = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+      User userPass = userRepository.findById(idUser).orElseThrow(() -> new EntityNotFoundException("Usuário com id = %s não encontrado."));
 
       if (password.currentPassword().equals(userPass.getPassword())){
           if(password.newPassword().equals(password.confirmNewPassword())){
@@ -55,9 +55,9 @@ public class UserService {
               userPass.setPassword(password.newPassword());
               return userRepository.save(userPass);
           }
-          throw new PasswordInvalidException(String.format("Os campos para inserir a nova senha e confimá-la não são iguais"));
+          throw new PasswordInvalidException(String.format("Os campos para inserir a nova senha e confimá-la não são iguais."));
       }
-      throw new PasswordInvalidException(String.format("O campo de última senha utilizada não está de acordo com o que é utilizado"));
+      throw new PasswordInvalidException(String.format("O campo de última senha utilizada não está de acordo com o que é utilizado."));
     }
 
     @Transactional(readOnly = true)
