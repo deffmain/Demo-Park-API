@@ -1,4 +1,6 @@
 package com.micael.demo_park_api.dto;
 
-public record UserResponseDTO(Long idUser, String name) {
+import com.micael.demo_park_api.domain.User;
+
+public record UserResponseDTO(Long idUser, String name, User.Role role) {
 }

@@ -46,7 +46,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> registrarUsuario(@Valid @RequestBody UserRegisterDTO userBody) {
 
         User user = userService.register(userBody);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserResponseDTO(user.getIdUser(), user.getUsername()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole()));
     }
 
 
@@ -64,7 +64,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> procurarPorId(@PathVariable Long idUser){
 
         User user = this.userService.encontrarPorId(idUser);
-        return ResponseEntity.status(HttpStatus.FOUND).body(new UserResponseDTO(user.getIdUser(), user.getUsername()));
+        return ResponseEntity.status(HttpStatus.OK).body(new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole()));
     }
 
     @Operation(summary = "Operacao para realizar a edicao da senha de acesso de um usuario.",
@@ -73,13 +73,13 @@ public class UserController {
                    @ApiResponse(responseCode = "204", description = "Senha alterada com sucesso!",
                        content = @Content(mediaType = "applicantion/Json",
                            schema =@Schema(implementation = Void.class))),
-                   @ApiResponse(responseCode = "400", description = "A nova senha não pode ser igual a senha usada anteriormente!",
+                   @ApiResponse(responseCode = "422", description = "A nova senha não pode ser igual a senha usada anteriormente!",
                        content = @Content(mediaType = "application/Json",
                            schema = @Schema(implementation = ErrorMessage.class))),
-                   @ApiResponse(responseCode = "400", description = "Os campos para inserir a nova senha e confimá-la não são iguais.",
+                   @ApiResponse(responseCode = "422", description = "Os campos para inserir a nova senha e confimá-la não são iguais.",
                        content = @Content(mediaType = "application/Json",
                            schema = @Schema(implementation = ErrorMessage.class))),
-                   @ApiResponse(responseCode = "400", description = "O campo de última senha utilizada não está de acordo com o que é utilizado.",
+                   @ApiResponse(responseCode = "422", description = "O campo de última senha utilizada não está de acordo com o que é utilizado.",
                        content = @Content(mediaType = "application/Json",
                            schema = @Schema(implementation = ErrorMessage.class))),
                    @ApiResponse(responseCode = "404", description = "Usuario com o id informado não encontrado",
@@ -87,12 +87,13 @@ public class UserController {
                            schema = @Schema(implementation = ErrorMessage.class)))}
     )
     @PatchMapping("/{idUser}")
-    public ResponseEntity<?> atualizarSenha(@PathVariable Long idUser, @Valid @RequestBody PasswordDTO newPassword){
+    public ResponseEntity<Void> atualizarSenha(@PathVariable Long idUser, @Valid @RequestBody PasswordDTO newPassword){
 
-        User user = userService.alterarCredenciais(idUser, newPassword);
-        return ResponseEntity.status(HttpStatus.OK).body("Senha alterada com sucesso!");
+        User user = userService.alterarSenha(idUser, newPassword);
+        return ResponseEntity.noContent().build();
     }
 
+    //-----
     @Operation(summary = "Operacao utilizada para realizar a leitura de todos os usuarios.",
         responses ={
                    @ApiResponse(responseCode = "200", description = "Usuarios econtrados retornados",
@@ -109,10 +110,11 @@ public class UserController {
             userService
                 .listarTodosUsurarios()
                 .stream()
-                .map(user -> new UserResponseDTO(user.getIdUser(), user.getUsername()))
+                .map(user -> new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole()))
                 .toList();
 
         return ResponseEntity.ok(users);
     }
+    //----//
 
 }

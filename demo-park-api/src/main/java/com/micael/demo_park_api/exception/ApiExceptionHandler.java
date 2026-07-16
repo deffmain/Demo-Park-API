@@ -77,9 +77,9 @@ public class ApiExceptionHandler {
 
         log.error("Api error - ", ex);
         return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
+            .status(HttpStatus.UNPROCESSABLE_CONTENT)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+            .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_CONTENT, ex.getMessage()));
 
     }
 
