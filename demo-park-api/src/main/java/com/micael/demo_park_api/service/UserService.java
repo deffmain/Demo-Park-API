@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+import java.util.Optional;
 
 
 @Service
@@ -68,6 +68,20 @@ public class UserService {
             throw new RuntimeException("Nenhum usuário encontrado");
         }
         return usuarios;
+    }
+
+    @Transactional(readOnly = true)
+    public User buscarPorUsername(String username){
+
+        return
+            this.userRepository
+            .findByUsername(username)
+                .orElseThrow(()-> new EntityNotFoundException(String.format("Usuário com username: %s não encontrado.", username)));
+    }
+
+    @Transactional(readOnly = true)
+    public User.Role buscarRolePorUsername(String username){
+        return this.userRepository.getRoleByUsername(username);
     }
 
 
