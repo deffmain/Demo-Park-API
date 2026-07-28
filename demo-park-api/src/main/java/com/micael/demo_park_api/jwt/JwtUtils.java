@@ -15,12 +15,12 @@ import java.util.Date;
 @Slf4j
 public class JwtUtils {
 
-    private static final String JWT_BEARER = "Bearer ";
-    private static final String JWT_AUTHORIZATION = "Authorization";
-    private static final String SECRET_KEY = "h25@1jhd#2h1Adh&em-lA*sh--20ha-2";
-    private static final long EXPIRE_DAYS = 0;
-    private static final long EXPIRE_HOURS = 0;
-    private static final long EXPIRE_MINUTES = 2;
+    public static final String JWT_BEARER = "Bearer ";
+    public static final String JWT_AUTHORIZATION = "Authorization";
+    public static final String SECRET_KEY = "h25@1jhd#2h1Adh&em-lA*sh--20ha-2";
+    public static final long EXPIRE_DAYS = 0;
+    public static final long EXPIRE_HOURS = 0;
+    public static final long EXPIRE_MINUTES = 30;
 
     private JwtUtils(){
     }

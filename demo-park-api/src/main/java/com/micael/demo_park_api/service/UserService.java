@@ -8,6 +8,7 @@ import com.micael.demo_park_api.exception.PasswordInvalidException;
 import com.micael.demo_park_api.exception.UsernameUniqueViolationException;
 import com.micael.demo_park_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public User register(UserRegisterDTO user){
@@ -27,7 +29,7 @@ public class UserService {
         try {
             User newUser = new User();
             newUser.setUsername(user.username());
-            newUser.setPassword(user.password());
+            newUser.setPassword(passwordEncoder.encode(user.password()));
 
             return userRepository.save(newUser);
         }
@@ -47,12 +49,12 @@ public class UserService {
 
       User userPass = userRepository.findById(idUser).orElseThrow(() -> new EntityNotFoundException("Usuário com id = %s não encontrado."));
 
-      if (password.currentPassword().equals(userPass.getPassword())){
+      if (passwordEncoder.matches(password.currentPassword(), userPass.getPassword())){
           if(password.newPassword().equals(password.confirmNewPassword())){
-              if(password.newPassword().equals(userPass.getPassword())){
+              if(passwordEncoder.matches(password.newPassword(), userPass.getPassword())){
                   throw new PasswordInvalidException(String.format("A nova senha não pode ser igual a senha usada anteriormente!"));
               }
-              userPass.setPassword(password.newPassword());
+              userPass.setPassword(passwordEncoder.encode(password.newPassword()));
               return userRepository.save(userPass);
           }
           throw new PasswordInvalidException(String.format("Os campos para inserir a nova senha e confimá-la não são iguais."));
