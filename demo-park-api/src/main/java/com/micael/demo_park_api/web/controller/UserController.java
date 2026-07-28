@@ -46,7 +46,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> registrarUsuario(@Valid @RequestBody UserRegisterDTO userBody) {
 
         User user = userService.register(userBody);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole().getDisplayName()));
     }
 
 
@@ -64,7 +64,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> procurarPorId(@PathVariable Long idUser){
 
         User user = this.userService.encontrarPorId(idUser);
-        return ResponseEntity.status(HttpStatus.OK).body(new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole()));
+        return ResponseEntity.status(HttpStatus.OK).body(new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole().getDisplayName()));
     }
 
     @Operation(summary = "Operacao para realizar a edicao da senha de acesso de um usuario.",
@@ -110,7 +110,7 @@ public class UserController {
             userService
                 .listarTodosUsurarios()
                 .stream()
-                .map(user -> new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole()))
+                .map(user -> new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole().getDisplayName()))
                 .toList();
 
         return ResponseEntity.ok(users);
