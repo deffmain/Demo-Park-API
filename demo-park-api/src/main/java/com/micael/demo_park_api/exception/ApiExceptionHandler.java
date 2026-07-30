@@ -11,6 +11,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.access.AccessDeniedException;
 
 @Slf4j
 @RestControllerAdvice
@@ -30,6 +31,17 @@ public class ApiExceptionHandler {
 
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorMessage> accesDeniedException
+        (AccessDeniedException ex, HttpServletRequest request){
+
+        log.error("Api error - ", ex);
+        return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, ex.getMessage()));
+
+    }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorMessage> handleHttpRequestMethodNotSupportedException(
