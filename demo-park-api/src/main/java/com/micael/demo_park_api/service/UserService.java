@@ -47,7 +47,7 @@ public class UserService {
     @Transactional
     public User alterarSenha(Long idUser, PasswordDTO password){
 
-      User userPass = userRepository.findById(idUser).orElseThrow(() -> new EntityNotFoundException("Usuário com id = %s não encontrado."));
+      User userPass = userRepository.findById(idUser).orElseThrow(() -> new EntityNotFoundException(String.format("Usuário com id = %s não encontrado.", idUser)));
 
       if (passwordEncoder.matches(password.currentPassword(), userPass.getPassword())){
           if(password.newPassword().equals(password.confirmNewPassword())){
