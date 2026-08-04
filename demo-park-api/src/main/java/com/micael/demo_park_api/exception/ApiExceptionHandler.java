@@ -27,8 +27,6 @@ public class ApiExceptionHandler {
             .status(HttpStatus.UNPROCESSABLE_CONTENT)
             .contentType(MediaType.APPLICATION_JSON)
             .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_CONTENT, "Campo(s) inválidos!", result));
-
-
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -84,7 +82,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(PasswordInvalidException.class)
-    public ResponseEntity<ErrorMessage> PasswordInvalidException
+    public ResponseEntity<ErrorMessage> passwordInvalidException
         (RuntimeException ex, HttpServletRequest request){
 
         log.error("Api error - ", ex);
