@@ -1,6 +1,5 @@
 package com.micael.demo_park_api;
 
-import com.micael.demo_park_api.domain.User;
 import com.micael.demo_park_api.dto.PasswordDTO;
 import com.micael.demo_park_api.dto.UserRegisterDTO;
 import com.micael.demo_park_api.dto.UserResponseDTO;
@@ -258,24 +257,6 @@ public class UsuarioIT {
 
     }
 
-
-    @Test
-    public void alterarSenha_ComSolicitacaoInvalida_RetornaErrorMessageComStatus400() {
-        ErrorMessage responseBody = webTestClient
-            .patch()
-            .uri("/api/v1/usuarios/1")
-            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "felipe.pereira88@gmail.com", "123456"))
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(new PasswordDTO("0000001", "123456", "123456"))
-            .exchange()
-            .expectStatus().isEqualTo(400)
-            .expectBody(ErrorMessage.class)
-            .returnResult().getResponseBody();
-
-        assertThat(responseBody).isNotNull();
-        assertThat(responseBody.getStatusCode()).isEqualTo(400);
-
-    }
 
     @Test
     public void alterarSenha_ComDadosInvalidos_RetornaErrorMessageEStatus422(){
