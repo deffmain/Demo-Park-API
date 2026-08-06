@@ -2,6 +2,8 @@ package com.micael.demo_park_api.domain;
 
 
 import jakarta.persistence.*;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -9,35 +11,30 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-
 @Entity
-@Table(name = "users_tb")
-@Getter
-@Setter
+@Table(name = "clientes_tb")
+@EntityListeners(AuditingEntityListener.class)
+@Getter@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-
-public class User implements Serializable {
-
+public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idUser;
+    private Long idCliente;
 
-    @Column(unique = true, nullable = false, length = 100)
-    private String username;
+    @Column(nullable = false, length = 100)
+    private String name;
 
-    @Column(nullable = false,length = 300)
-    private String password;
+    @Column(unique = true, nullable = false, length = 11)
+    private String cpf;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 25)
-    private Role role = Role.ROLE_CLIENTE;
+    @OneToOne
+    @JoinColumn(name = "id_user", nullable = false)
+    private User user;
 
     @CreatedDate
     private LocalDateTime dataCriacao;
@@ -51,33 +48,15 @@ public class User implements Serializable {
     @LastModifiedBy
     private String modificadoPor;
 
-
-    public enum Role{
-
-        ROLE_ADMIN, ROLE_CLIENTE;
-
-        public String getDisplayName() {
-            return name().replace("ROLE_", "");
-        }
-
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(idUser, user.idUser);
+        Cliente cliente = (Cliente) o;
+        return Objects.equals(idCliente, cliente.idCliente);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(idUser);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-            "id_user=" + idUser +
-            '}';
+        return Objects.hashCode(idCliente);
     }
 }

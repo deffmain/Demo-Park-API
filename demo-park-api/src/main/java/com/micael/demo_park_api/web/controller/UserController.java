@@ -2,9 +2,9 @@ package com.micael.demo_park_api.web.controller;
 
 
 import com.micael.demo_park_api.domain.User;
-import com.micael.demo_park_api.dto.PasswordDTO;
-import com.micael.demo_park_api.dto.UserRegisterDTO;
-import com.micael.demo_park_api.dto.UserResponseDTO;
+import com.micael.demo_park_api.dto.userDTO.PasswordDTO;
+import com.micael.demo_park_api.dto.userDTO.UserRegisterDTO;
+import com.micael.demo_park_api.dto.userDTO.UserResponseDTO;
 import com.micael.demo_park_api.exception.ErrorMessage;
 import com.micael.demo_park_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,7 +61,7 @@ public class UserController {
                             schema = @Schema(implementation = UserResponseDTO.class))),
                    @ApiResponse(responseCode = "403", description = "Usuario sem permissão para acessar o recurso",
                        content = @Content(mediaType = "application/Json",
-                            schema = @Schema(implementation = UserResponseDTO.class))),
+                            schema = @Schema(implementation = ErrorMessage.class))),
                    @ApiResponse(responseCode = "404", description = "Usuario com o id informado não encontrado",
                        content = @Content(mediaType = "application/Json",
                            schema = @Schema(implementation = ErrorMessage.class)))}
@@ -111,7 +111,7 @@ public class UserController {
                            schema = @Schema(implementation = UserResponseDTO.class))),
                    @ApiResponse(responseCode = "403", description = "Usuario sem permissão para acessar o recurso",
                        content = @Content(mediaType = "application/Json",
-                           schema = @Schema(implementation = UserResponseDTO.class))),
+                           schema = @Schema(implementation = ErrorMessage.class))),
                    @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
                        content = @Content(mediaType = "application/json",
                            schema = @Schema(implementation = RuntimeException.class)))}
