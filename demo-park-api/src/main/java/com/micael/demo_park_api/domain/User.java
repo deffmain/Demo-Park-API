@@ -41,10 +41,13 @@ public class User implements Serializable {
 
     @CreatedDate
     private LocalDateTime dataCriacao;
+
     @LastModifiedDate
     private LocalDateTime dataModificacao;
+
     @CreatedBy
     private String criadoPor;
+
     @LastModifiedBy
     private String modificadoPor;
 

@@ -1,6 +1,6 @@
 package com.micael.demo_park_api;
 
-import com.micael.demo_park_api.dto.UserLoginDTO;
+import com.micael.demo_park_api.dto.userDTO.UserLoginDTO;
 import com.micael.demo_park_api.jwt.JwtToken;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.WebTestClient;

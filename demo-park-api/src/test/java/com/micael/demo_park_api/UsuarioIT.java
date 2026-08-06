@@ -1,8 +1,8 @@
 package com.micael.demo_park_api;
 
-import com.micael.demo_park_api.dto.PasswordDTO;
-import com.micael.demo_park_api.dto.UserRegisterDTO;
-import com.micael.demo_park_api.dto.UserResponseDTO;
+import com.micael.demo_park_api.dto.userDTO.PasswordDTO;
+import com.micael.demo_park_api.dto.userDTO.UserRegisterDTO;
+import com.micael.demo_park_api.dto.userDTO.UserResponseDTO;
 import com.micael.demo_park_api.exception.ErrorMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

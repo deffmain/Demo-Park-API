@@ -1,8 +1,8 @@
 package com.micael.demo_park_api.service;
 
 import com.micael.demo_park_api.domain.User;
-import com.micael.demo_park_api.dto.PasswordDTO;
-import com.micael.demo_park_api.dto.UserRegisterDTO;
+import com.micael.demo_park_api.dto.userDTO.PasswordDTO;
+import com.micael.demo_park_api.dto.userDTO.UserRegisterDTO;
 import com.micael.demo_park_api.exception.EntityNotFoundException;
 import com.micael.demo_park_api.exception.PasswordInvalidException;
 import com.micael.demo_park_api.exception.UsernameUniqueViolationException;

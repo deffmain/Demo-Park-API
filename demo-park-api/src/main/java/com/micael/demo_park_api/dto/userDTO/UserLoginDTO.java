@@ -1,4 +1,4 @@
-package com.micael.demo_park_api.dto;
+package com.micael.demo_park_api.dto.userDTO;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

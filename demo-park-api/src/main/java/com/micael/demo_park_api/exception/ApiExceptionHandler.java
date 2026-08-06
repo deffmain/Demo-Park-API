@@ -57,7 +57,7 @@ public class ApiExceptionHandler {
             ));
     }
 
-    @ExceptionHandler(UsernameUniqueViolationException.class)
+    @ExceptionHandler({UsernameUniqueViolationException.class,CpfUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> usernameUniqueViolationException
         (RuntimeException ex, HttpServletRequest request){
 
