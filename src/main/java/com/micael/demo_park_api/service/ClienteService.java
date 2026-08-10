@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class ClienteService {
     }
 
     @Transactional(readOnly = true)
-    public Cliente encontrarClientePorId(long idCliente){
+    public Cliente encontrarClientePorId(Long idCliente){
         return clienteRepository.findById(idCliente).
             orElseThrow(() -> new EntityNotFoundException(String.format("Cliente com id = %s não encontrado.", idCliente)));
     }
@@ -48,5 +48,8 @@ public class ClienteService {
         return clientes;
     }
 
-
+    @Transactional(readOnly = true)
+    public Cliente encontrarUsuarioPorId(Long id) {
+        return clienteRepository.findByUserIdUser(id);
+    }
 }

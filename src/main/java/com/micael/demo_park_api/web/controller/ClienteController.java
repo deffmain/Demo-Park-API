@@ -12,6 +12,8 @@ import com.micael.demo_park_api.repository.projection.ClienteProjection;
 import com.micael.demo_park_api.service.ClienteService;
 import com.micael.demo_park_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,12 +23,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
 @Tag(name = "Clientes", description = "Contem todas as operacoes relativas ao recurso de um cliente")
 @RestController
@@ -97,13 +100,62 @@ public class ClienteController {
             .body(new ClienteResponseDTO(cliente.getIdCliente(), cliente.getName(), cliente.getCpf()));
     }
 
+
+    @Operation(summary = "Recuperar lista de clientes",
+        description = "Requisição exige uso de um bearer token. Acesso restrito a Role='ADMIN' ",
+        security = @SecurityRequirement(name = "security"),
+        parameters = {
+            @Parameter(in = QUERY, name = "page",
+                content = @Content(schema = @Schema(type = "integer", defaultValue = "0")),
+                description = "Representa a página retornada"
+            ),
+            @Parameter(in = QUERY, name = "size",
+                content = @Content(schema = @Schema(type = "integer", defaultValue = "5")),
+                description = "Representa o total de elementos por página"
+            ),
+            @Parameter(in = QUERY, name = "sort", hidden = true,
+                array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "nome,asc")),
+                description = "Representa a ordenação dos resultados. Aceita multiplos critérios de ordenação são suportados.")
+        },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Usuarios encontrados com sucesso",
+                content = @Content(mediaType = " application/json;charset=UTF-8",
+                    schema = @Schema(implementation = ClienteResponseDTO.class))
+            ),
+            @ApiResponse(responseCode = "403", description = "Recurso não permitido ao perfil de CLIENTE",
+                content = @Content(mediaType = " application/json;charset=UTF-8",
+                    schema = @Schema(implementation = ErrorMessage.class))
+            )
+        })
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ClientePageAbleDTO> acessarTodosClientes(Pageable pageable){
+    public ResponseEntity<ClientePageAbleDTO> acessarTodosClientes(@Parameter(hidden = true)
+                                                                   @PageableDefault(size = 5, sort = {"idCliente"}) Pageable pageable){
         Page<ClienteProjection> clientes = clienteService
             .encontrarTodosClientes(pageable);
 
         return ResponseEntity.ok(clienteMapper.toCliPageAble(clientes));
+
+    }
+
+
+    @Operation(summary = "Operacao utilizada para um cliente acessar os detalhes do seu cadastro",
+        description = "Requisição exige um bearer token, apenas um usuário que é CLIENTE pode utilizar o recurso de detalhes.",
+        security = @SecurityRequirement(name  = "security"),
+        responses ={
+            @ApiResponse(responseCode = "200", description = "Detalhes do cliente localizados com sucesso!",
+                content = @Content(mediaType = "application/Json",
+                    schema = @Schema(implementation = ClienteResponseDTO.class))),
+            @ApiResponse(responseCode = "403", description = "Recurso não é permitido para usuário ADMIN",
+                content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)))}
+    )
+    @GetMapping("/detalhes")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<ClienteResponseDTO> acessarDetalhes(@AuthenticationPrincipal JwtUserDetails userDetails){
+        Cliente cliente = clienteService.encontrarUsuarioPorId(userDetails.getId());
+
+        return ResponseEntity.ok(clienteMapper.toClienteResponseDTO(cliente));
 
     }
 
