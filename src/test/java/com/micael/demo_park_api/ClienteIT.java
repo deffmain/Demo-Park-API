@@ -2,6 +2,7 @@ package com.micael.demo_park_api;
 
 
 import com.micael.demo_park_api.dto.clienteDTO.ClienteCreateDTO;
+import com.micael.demo_park_api.dto.clienteDTO.ClientePageAbleDTO;
 import com.micael.demo_park_api.dto.clienteDTO.ClienteResponseDTO;
 import com.micael.demo_park_api.exception.ErrorMessage;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +50,7 @@ public class ClienteIT {
             .returnResult().getResponseBody();
 
         assertThat(responseBody).isNotNull();
-        assertThat(responseBody.id()).isNotNull();
+        assertThat(responseBody.idCliente()).isNotNull();
         assertThat(responseBody.name()).isEqualTo("batata");
         assertThat(responseBody.cpf()).isEqualTo("39829688011");
 
@@ -183,7 +184,7 @@ public class ClienteIT {
             .returnResult().getResponseBody();
 
         assertThat(responseBody).isNotNull();
-        assertThat(responseBody.id()).isEqualTo(2);
+        assertThat(responseBody.idCliente()).isEqualTo(2);
         assertThat(responseBody.cpf()).isEqualTo("57386171005");
 
     }
@@ -219,6 +220,40 @@ public class ClienteIT {
 
         assertThat(responseBody).isNotNull();
         assertThat(responseBody.getStatusCode()).isEqualTo(404);
+
+    }
+
+    @Test
+    public void encontrarTodosClientes_ComUsuarioAutorizado_RetornarClientePageAbleDTOEStatus200(){
+
+        ClientePageAbleDTO responseBody = webTestClient
+            .get()
+            .uri("/api/v1/clientes?page2&size=2")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "admin@gmail.com", "123456"))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(ClientePageAbleDTO.class)
+            .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+
+
+    }
+
+    @Test
+    public void encontrarTodosClientes_ComUsuarioSemAutorizacao_RetornarErrorMessageEStatus403(){
+
+        ErrorMessage responseBody = webTestClient
+            .get()
+            .uri("/api/v1/clientes?page2&size=2")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "felipe.pereira88@gmail.com", "123456"))
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatusCode()).isEqualTo(403);
 
     }
 
