@@ -3,3 +3,10 @@
 *.iml
 *.iws
 *.ipr
+
+### Node / build artifacts (evita commit acidental de projetos externos) ###
+node_modules/
+dist/
+
+### Maven build ###
+target/
