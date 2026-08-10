@@ -1,12 +1,50 @@
-### IntelliJ IDEA ###
-.idea/
-*.iml
-*.iws
-*.ipr
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+*.class
 
 ### Node / build artifacts (evita commit acidental de projetos externos) ###
 node_modules/
 dist/
 
-### Maven build ###
-target/
+### secrets ###
+application.properties
+.spring-boot-devtools.properties
+
+### SPB ###
+*.log
+logs/
+
+### H2 ###
+*.mv.db
+*.h2.db
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/

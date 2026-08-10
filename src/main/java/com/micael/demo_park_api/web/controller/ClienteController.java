@@ -99,7 +99,7 @@ public class ClienteController {
 
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<ClientePageAbleDTO>> acessarTodosClientes(Pageable pageable){
+    public ResponseEntity<ClientePageAbleDTO> acessarTodosClientes(Pageable pageable){
         Page<ClienteProjection> clientes = clienteService
             .encontrarTodosClientes(pageable);
 
