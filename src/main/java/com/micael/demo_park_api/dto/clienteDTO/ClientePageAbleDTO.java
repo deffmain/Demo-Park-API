@@ -22,6 +22,6 @@ public record ClientePageAbleDTO(
 
     int totalPages,
 
-    int totalElements
+    long totalElements
 
 ){}
