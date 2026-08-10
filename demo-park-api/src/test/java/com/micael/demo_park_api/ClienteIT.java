@@ -132,6 +132,94 @@ public class ClienteIT {
 
     }
 
+    @Test
+    public void criarCliente_ComUsuarioSemAutorizacao_RetornarErrorMessageEStatus403(){
 
+        ErrorMessage responseBody = webTestClient
+            .post()
+            .uri("/api/v1/clientes")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient,"admin@gmail.com","123456"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new ClienteCreateDTO("batata", "39829688011"))
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatusCode()).isEqualTo(403);
+
+    }
+
+    @Test
+    public void criarCliente_ComDadosInvalidos_RetornarErrorMessageEStatus409(){
+
+        ErrorMessage responseBody = webTestClient
+            .post()
+            .uri("/api/v1/clientes")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "eduarda.barbosa94@outlook.com", "123456"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new ClienteCreateDTO("Eduarda Barbosa", "57386171005"))
+            .exchange()
+            .expectStatus().isEqualTo(409)
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatusCode()).isEqualTo(409);
+
+    }
+
+    @Test
+    public void encontrarCliente_ComIdValido_RetornarClienteResponseDTOeStatus200(){
+
+        ClienteResponseDTO responseBody = webTestClient
+            .get()
+            .uri("/api/v1/clientes/2")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "admin@gmail.com", "123456"))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(ClienteResponseDTO.class)
+            .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.id()).isEqualTo(2);
+        assertThat(responseBody.cpf()).isEqualTo("57386171005");
+
+    }
+
+    @Test
+    public void encontrarCliente_SemAutorizacao_RetornarErrorMessageEStatus403(){
+
+        ErrorMessage responseBody = webTestClient
+            .get()
+            .uri("/api/v1/clientes/2")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "eduarda.barbosa94@outlook.com", "123456"))
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatusCode()).isEqualTo(403);
+
+    }
+
+    @Test
+    public void encontrarCliente_ComIdInexistente_RetornarErrorMessageEStatus404(){
+
+        ErrorMessage responseBody = webTestClient
+            .get()
+            .uri("/api/v1/clientes/20")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "admin@gmail.com", "123456"))
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatusCode()).isEqualTo(404);
+
+    }
 
 }

@@ -68,9 +68,9 @@ public class UserController {
     )
     @GetMapping("/{idUser}")
     @PreAuthorize("hasRole('ADMIN') OR (hasRole('CLIENTE') AND #idUser == authentication.principal.id)")
-    public ResponseEntity<UserResponseDTO> procurarPorId(@PathVariable Long idUser){
+    public ResponseEntity<UserResponseDTO> procurarUserPorId(@PathVariable Long idUser){
 
-        User user = this.userService.encontrarPorId(idUser);
+        User user = this.userService.encontrarUserPorId(idUser);
         return ResponseEntity.status(HttpStatus.OK).body(new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole().getDisplayName()));
     }
 
@@ -118,7 +118,7 @@ public class UserController {
     )
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponseDTO>> acessarTodos(){
+    public ResponseEntity<List<UserResponseDTO>> acessarTodosUsuarios(){
 
         List<UserResponseDTO> users =
             userService
