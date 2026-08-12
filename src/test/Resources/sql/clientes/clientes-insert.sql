@@ -11,6 +11,8 @@ INSERT INTO users_tb (id_user, username, password, role) VALUES (9, 'ana.costa74
 INSERT INTO users_tb (id_user, username, password, role) VALUES (10, 'vanessa.rocha81@gmail.com', '$2a$12$TxXW6RycNiIlXyBLkrExGuceVzd5SEgu2aua5f07Sgctqdi1zJ7iq', 'ROLE_CLIENTE');
 INSERT INTO users_tb (id_user, username, password, role) VALUES (11, 'diego.ferreira72@email.com', '$2a$12$TxXW6RycNiIlXyBLkrExGuceVzd5SEgu2aua5f07Sgctqdi1zJ7iq', 'ROLE_CLIENTE');
 INSERT INTO users_tb (id_user, username, password, role) VALUES (12, 'admin@gmail.com', '$2a$12$TxXW6RycNiIlXyBLkrExGuceVzd5SEgu2aua5f07Sgctqdi1zJ7iq', 'ROLE_ADMIN');
+ALTER TABLE users_tb ALTER COLUMN id_user RESTART WITH 201;
+
 
 INSERT INTO clientes_tb (id_cliente, name, cpf, id_user) VALUES (2, 'Eduarda Barbosa', '57386171005', 2);
 INSERT INTO clientes_tb (id_cliente, name, cpf, id_user) VALUES (3, 'Felipe Silva', '85207502046', 3);
@@ -22,5 +24,6 @@ INSERT INTO clientes_tb (id_cliente, name, cpf, id_user) VALUES (8, 'Lucas Carva
 INSERT INTO clientes_tb (id_cliente, name, cpf, id_user) VALUES (9, 'Ana Costa', '68420173098', 9);
 INSERT INTO clientes_tb (id_cliente, name, cpf, id_user) VALUES (10, 'Vanessa Rocha', '74519028061', 10);
 INSERT INTO clientes_tb (id_cliente, name, cpf, id_user) VALUES (11, 'Diego Ferreira', '20863457012', 11);
+ALTER TABLE clientes_tb ALTER COLUMN id_cliente RESTART WITH 201;
 
 

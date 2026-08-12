@@ -57,8 +57,8 @@ public class ApiExceptionHandler {
             ));
     }
 
-    @ExceptionHandler({UsernameUniqueViolationException.class,CpfUniqueViolationException.class})
-    public ResponseEntity<ErrorMessage> usernameUniqueViolationException
+    @ExceptionHandler({UsernameUniqueViolationException.class,CpfUniqueViolationException.class, CodigoUniqueViolationException.class})
+    public ResponseEntity<ErrorMessage> uniqueViolationExceptionPersonalized
         (RuntimeException ex, HttpServletRequest request){
 
         log.error("Api error - ", ex);

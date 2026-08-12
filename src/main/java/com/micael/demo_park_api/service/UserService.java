@@ -23,7 +23,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User register(UserRegisterDTO user){
+    public User registrarUsuario(UserRegisterDTO user){
 
         try {
             User newUser = new User();
