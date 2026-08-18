@@ -2,8 +2,8 @@ package com.micael.demo_park_api;
 
 
 import com.micael.demo_park_api.domain.Vaga;
-import com.micael.demo_park_api.dto.VagaDTO.VagaCreateDTO;
-import com.micael.demo_park_api.dto.VagaDTO.VagaResponseDTO;
+import com.micael.demo_park_api.dto.vagaDTO.VagaCreateDTO;
+import com.micael.demo_park_api.dto.vagaDTO.VagaResponseDTO;
 import com.micael.demo_park_api.exception.ErrorMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -131,7 +131,7 @@ public class VagaIT {
     }
 
     @Test
-    public void localizarVaga_ComURIValidaEUsuarioAutorizado_RetornarVagasResponseDTOEStatus200(){
+    public void localizarVaga_ComURIValidaEUsuarioAutorizado_RetornarVagasResponseDTOEStatus201(){
 
         VagaResponseDTO responseBody = webTestClient
             .get()

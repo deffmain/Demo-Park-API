@@ -1,4 +1,4 @@
-package com.micael.demo_park_api.dto.VagaDTO;
+package com.micael.demo_park_api.dto.vagaDTO;
 
 import com.micael.demo_park_api.domain.Vaga;
 import jakarta.validation.constraints.NotBlank;
