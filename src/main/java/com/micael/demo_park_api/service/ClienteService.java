@@ -6,6 +6,7 @@ import com.micael.demo_park_api.exception.EntityNotFoundException;
 import com.micael.demo_park_api.repository.ClienteRepository;
 import com.micael.demo_park_api.repository.projection.ClienteProjection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ClienteService {
+
 
     private final ClienteRepository clienteRepository;
 
@@ -50,6 +52,12 @@ public class ClienteService {
 
     @Transactional(readOnly = true)
     public Cliente encontrarUsuarioPorId(Long id) {
-        return clienteRepository.findByUserIdUser(id);
+        return clienteRepository.findByidUserFK(id);
+    }
+
+    public Cliente encontrarPorCpf(String cpf) {
+        return clienteRepository.findByCpf(cpf).orElseThrow(
+            () -> new EntityNotFoundException(String.format("Cliente com o CPF:%s não encontrado.", cpf))
+        );
     }
 }

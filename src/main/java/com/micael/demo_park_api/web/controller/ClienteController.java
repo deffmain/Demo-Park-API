@@ -68,7 +68,7 @@ public class ClienteController {
 
         clienteIn.setName(cliente.name());
         clienteIn.setCpf(cliente.cpf());
-        clienteIn.setUser(userService.encontrarUserPorId(jwtUserDetails.getId()));
+        clienteIn.setIdUserFK(userService.encontrarUserPorId(jwtUserDetails.getId()));
 
         clienteService.createCliente(clienteIn);
         return ResponseEntity

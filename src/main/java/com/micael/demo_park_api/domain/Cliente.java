@@ -17,7 +17,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "clientes_tb")
 @EntityListeners(AuditingEntityListener.class)
-@Getter@Setter
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cliente {
@@ -34,7 +35,7 @@ public class Cliente {
 
     @OneToOne
     @JoinColumn(name = "id_user", nullable = false)
-    private User user;
+    private User idUserFK;
 
     @CreatedDate
     private LocalDateTime dataCriacao;

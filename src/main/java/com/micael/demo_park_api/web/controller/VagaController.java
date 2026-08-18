@@ -2,8 +2,8 @@ package com.micael.demo_park_api.web.controller;
 
 
 import com.micael.demo_park_api.domain.Vaga;
-import com.micael.demo_park_api.dto.VagaDTO.VagaCreateDTO;
-import com.micael.demo_park_api.dto.VagaDTO.VagaResponseDTO;
+import com.micael.demo_park_api.dto.vagaDTO.VagaCreateDTO;
+import com.micael.demo_park_api.dto.vagaDTO.VagaResponseDTO;
 import com.micael.demo_park_api.dto.mapStruct.VagaMapper;
 import com.micael.demo_park_api.exception.ErrorMessage;
 import com.micael.demo_park_api.service.VagaService;

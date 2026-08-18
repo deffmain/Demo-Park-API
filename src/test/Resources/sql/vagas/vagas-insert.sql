@@ -12,7 +12,7 @@ INSERT INTO users_tb (id_user, username, password, role) VALUES (11, 'diego.ferr
 INSERT INTO users_tb (id_user, username, password, role) VALUES (12, 'admin@gmail.com', '$2a$12$TxXW6RycNiIlXyBLkrExGuceVzd5SEgu2aua5f07Sgctqdi1zJ7iq', 'ROLE_ADMIN');
 ALTER TABLE users_tb ALTER COLUMN id_user RESTART WITH 201;
 
-INSERT INTO vagas_tb (id_vaga, codigovaga, statusvaga) VALUES (2, 'A-01', 'LIVRE');
-INSERT INTO vagas_tb (id_vaga, codigovaga, statusvaga) VALUES (3, 'B-02', 'LIVRE');
-INSERT INTO vagas_tb (id_vaga, codigovaga, statusvaga) VALUES (4, 'C-03', 'OCUPADA');
+INSERT INTO vagas_tb (id_vaga, codigo_vaga, status_vaga) VALUES (2, 'A-01', 'LIVRE');
+INSERT INTO vagas_tb (id_vaga, codigo_vaga, status_vaga) VALUES (3, 'B-02', 'LIVRE');
+INSERT INTO vagas_tb (id_vaga, codigo_vaga, status_vaga) VALUES (4, 'C-03', 'OCUPADA');
 ALTER TABLE vagas_tb ALTER COLUMN id_vaga RESTART WITH 201;

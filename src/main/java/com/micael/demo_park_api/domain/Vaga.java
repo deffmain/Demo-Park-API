@@ -28,10 +28,10 @@ public class Vaga implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idVaga;
 
-    @Column(name = "codigovaga",nullable = false, unique = true, length = 4)
+    @Column(nullable = false, unique = true, length = 4)
     private String codigoVaga;
 
-    @Column(name = "statusvaga",nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     public StatusVaga statusVaga;
 
