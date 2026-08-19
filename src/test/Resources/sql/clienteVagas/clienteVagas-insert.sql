@@ -39,4 +39,7 @@ INSERT INTO vagas_tb (id_vaga, codigo_vaga, status_vaga) VALUES(10, 'A-10', 'LIV
 INSERT INTO vagas_tb (id_vaga, codigo_vaga, status_vaga) VALUES(11, 'B-01', 'LIVRE');
 ALTER TABLE vagas_tb ALTER COLUMN id_vaga RESTART WITH 201;
 
-
+INSERT INTO clientes_vagas_tb(id_cliente_vaga, corcv, data_entradacv, data_saidacv, descontocv, marcacv, modelocv, placacv, recibocv, valorcv, id_vaga, id_cliente_fk)
+VALUES(2,'Preto','2026-08-18 10:44:53.067961',null,null,'Honda','Civic','LFJ-1023','20260818-104453',null,8,2);
+INSERT INTO clientes_vagas_tb(id_cliente_vaga, corcv, data_entradacv,data_saidacv, descontocv, marcacv, modelocv, placacv, recibocv, valorcv, id_vaga, id_cliente_fk)
+VALUES(3,'Cinza','2026-08-19 11:50:39.067961',null,null,'Fiat','Argo','HOA-4632','20260819-115039',null,9,3);
