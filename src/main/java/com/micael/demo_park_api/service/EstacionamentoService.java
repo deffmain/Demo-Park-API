@@ -1,7 +1,6 @@
 package com.micael.demo_park_api.service;
 
 
-import com.micael.demo_park_api.domain.Cliente;
 import com.micael.demo_park_api.domain.ClienteVaga;
 import com.micael.demo_park_api.domain.Vaga;
 import com.micael.demo_park_api.dto.clienteVagaDTO.EstacionamentoCreateDTO;
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -35,6 +35,32 @@ public class EstacionamentoService {
         clienteVaga.setDataEntradaCV(LocalDateTime.now());
 
         clienteVaga.setReciboCV(EstacionamentoUtils.gerarRecibo());
+
+        return clienteVagaService.registrarClienteVaga(clienteVaga);
+    }
+
+    @Transactional
+    public ClienteVaga checkout(String recibo){
+
+        ClienteVaga clienteVaga = clienteVagaService.procurarClienteViaRecibo(recibo);
+
+        clienteVaga.setDataSaidaCV(LocalDateTime.now());
+
+        clienteVaga.setValorCV(EstacionamentoUtils
+            .calcularCusto(clienteVaga.getDataEntradaCV(),clienteVaga.getDataSaidaCV()));
+
+        clienteVaga.setDescontoCV(
+            EstacionamentoUtils
+                .calcularDesconto(
+                    clienteVaga.getValorCV(),
+                    clienteVagaService.estacionamentosRealizadosTotais(clienteVaga.getIdClienteFK().getIdCliente())));
+
+        clienteVaga.getIdVagaFK().setStatusVaga(Vaga.StatusVaga.LIVRE);
+
+        if(!clienteVaga.getDescontoCV().equals(BigDecimal.valueOf(0))){
+            clienteVaga
+                .setValorCV(clienteVaga.getValorCV().subtract(clienteVaga.getDescontoCV()));
+        }
 
         return clienteVagaService.registrarClienteVaga(clienteVaga);
     }
