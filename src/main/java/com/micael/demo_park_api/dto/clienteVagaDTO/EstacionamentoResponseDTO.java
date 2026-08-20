@@ -1,6 +1,7 @@
 package com.micael.demo_park_api.dto.clienteVagaDTO;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.math.BigDecimal;
@@ -15,7 +16,9 @@ public record EstacionamentoResponseDTO(
     String corCV,
     String cpf,
     String reciboCV,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS")
     LocalDateTime dataEntradaCV,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS")
     LocalDateTime dataSaidaCV,
     String vagaCodigo,
     BigDecimal valorCV,

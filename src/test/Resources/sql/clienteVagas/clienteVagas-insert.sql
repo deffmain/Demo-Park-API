@@ -42,4 +42,6 @@ ALTER TABLE vagas_tb ALTER COLUMN id_vaga RESTART WITH 201;
 INSERT INTO clientes_vagas_tb(id_cliente_vaga, corcv, data_entradacv, data_saidacv, descontocv, marcacv, modelocv, placacv, recibocv, valorcv, id_vaga, id_cliente_fk)
 VALUES(2,'Preto','2026-08-18 10:44:53.067961',null,null,'Honda','Civic','LFJ-1023','20260818-104453',null,8,2);
 INSERT INTO clientes_vagas_tb(id_cliente_vaga, corcv, data_entradacv,data_saidacv, descontocv, marcacv, modelocv, placacv, recibocv, valorcv, id_vaga, id_cliente_fk)
-VALUES(3,'Cinza','2026-08-19 11:50:39.067961',null,null,'Fiat','Argo','HOA-4632','20260819-115039',null,9,3);
+VALUES(3,'Cinza','2026-08-19 11:50:39.028952',null,null,'Fiat','Argo','HOA-4632','20260819-115039',null,9,3);
+INSERT INTO clientes_vagas_tb(id_cliente_vaga, corcv, data_entradacv, data_saidacv, descontocv, marcacv, modelocv, placacv, recibocv, valorcv, id_vaga, id_cliente_fk)
+VALUES(4,'Branco','2026-09-18 12:00:00.075124',null,null,'Bmw','320i','GSK-4424','20260918-120000',null,7,4);

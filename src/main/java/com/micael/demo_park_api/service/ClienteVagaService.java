@@ -4,7 +4,10 @@ package com.micael.demo_park_api.service;
 import com.micael.demo_park_api.domain.ClienteVaga;
 import com.micael.demo_park_api.exception.EntityNotFoundException;
 import com.micael.demo_park_api.repository.ClienteVagaRepository;
+import com.micael.demo_park_api.repository.projection.ClienteVagaProjection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,19 @@ public class ClienteVagaService {
 
         return clienteVagaRepository.countByIdClienteFK_IdClienteAndDataSaidaCVIsNotNull(id).orElseThrow(
         () -> new EntityNotFoundException(String.format("Não forma encontrados registros para o ID:%s", id)));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ClienteVagaProjection> encontrarTodosEstPorCpf(Pageable pageable, String cpf){
+
+        Page<ClienteVagaProjection> estacionamentos = clienteVagaRepository.findAllByIdClienteFKCpf(cpf,pageable);
+
+        if(estacionamentos.isEmpty()){
+            throw new RuntimeException(String.format("Nenhum registro encontrado encontrado para o CPF:%s", cpf));
+        }
+
+        return estacionamentos;
+
     }
 
 
