@@ -60,4 +60,5 @@ public class ClienteService {
             () -> new EntityNotFoundException(String.format("Cliente com o CPF:%s não encontrado.", cpf))
         );
     }
+
 }

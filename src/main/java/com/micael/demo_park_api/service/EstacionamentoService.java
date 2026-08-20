@@ -9,7 +9,6 @@ import com.micael.demo_park_api.util.EstacionamentoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -21,6 +20,8 @@ public class EstacionamentoService {
     private final ClienteService clienteService;
     private final VagaService vagaService;
     private final ClienteVagaMapper clienteVagaMapper;
+
+
 
     @Transactional
     public ClienteVaga checkIn(EstacionamentoCreateDTO etcDTO){
@@ -53,7 +54,8 @@ public class EstacionamentoService {
             EstacionamentoUtils
                 .calcularDesconto(
                     clienteVaga.getValorCV(),
-                    clienteVagaService.estacionamentosRealizadosTotais(clienteVaga.getIdClienteFK().getIdCliente())));
+                    clienteVagaService
+                        .estacionamentosRealizadosTotais(clienteVaga.getIdClienteFK().getIdCliente())));
 
         clienteVaga.getIdVagaFK().setStatusVaga(Vaga.StatusVaga.LIVRE);
 
@@ -64,5 +66,6 @@ public class EstacionamentoService {
 
         return clienteVagaService.registrarClienteVaga(clienteVaga);
     }
+
 
 }
