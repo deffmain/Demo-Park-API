@@ -39,12 +39,26 @@ public class ClienteVagaService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ClienteVagaProjection> encontrarTodosEstPorCpf(Pageable pageable, String cpf){
+    public Page<ClienteVagaProjection> encontrarRegistrosEstPorCpf(Pageable pageable, String cpf){
 
         Page<ClienteVagaProjection> estacionamentos = clienteVagaRepository.findAllByIdClienteFKCpf(cpf,pageable);
 
         if(estacionamentos.isEmpty()){
             throw new RuntimeException(String.format("Nenhum registro encontrado encontrado para o CPF:%s", cpf));
+        }
+
+        return estacionamentos;
+
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ClienteVagaProjection> encontrarRegistrosEstPorId(Pageable pageable, Long id){
+
+        Long User;
+        Page<ClienteVagaProjection> estacionamentos = clienteVagaRepository.findAllByIdClienteFKIdUserFKIdUser(id, pageable);
+
+        if(estacionamentos.isEmpty()){
+            throw new EntityNotFoundException(String.format("Nenhum registro encontrado encontrado para o CPF:%s", id));
         }
 
         return estacionamentos;

@@ -9,16 +9,22 @@ import com.micael.demo_park_api.dto.clienteVagaDTO.EstacionamentoResponseDTO;
 import com.micael.demo_park_api.dto.mapStruct.ClienteVagaMapper;
 
 import com.micael.demo_park_api.exception.ErrorMessage;
+import com.micael.demo_park_api.jwt.JwtUserDetails;
 import com.micael.demo_park_api.repository.projection.ClienteVagaProjection;
+import com.micael.demo_park_api.service.ClienteService;
 import com.micael.demo_park_api.service.ClienteVagaService;
 import com.micael.demo_park_api.service.EstacionamentoService;
+import com.micael.demo_park_api.service.JasperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -27,14 +33,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
 @RestController
 @RequestMapping("api/v1/estacionamentos")
@@ -44,6 +54,8 @@ public class EstacionamentoController {
     private final EstacionamentoService estacionamentoService;
     private final ClienteVagaMapper clienteVagaMapper;
     private final ClienteVagaService clienteVagaService;
+    private final ClienteService clienteService;
+    private final JasperService jasperService;
 
     @Operation(summary = "Operação de check-in", description = "Recurso para dar entrada de um veículo no estacionamento. " +
         "Requisição exige uso de um bearer token. Acesso restrito a usuarios com role 'ADMIN'",
@@ -138,10 +150,67 @@ public class EstacionamentoController {
     public ResponseEntity<EstacionamentoPageAbleDTO> encontrarRegistrosCpf(@Parameter(hidden = true)
     @PageableDefault(size = 3, sort = {"dataEntradaCV"})Pageable pageable, @PathVariable String cpf){
 
-        Page<ClienteVagaProjection> clienteVaga = clienteVagaService.encontrarTodosEstPorCpf(pageable, cpf);
+        Page<ClienteVagaProjection> clienteVaga = clienteVagaService.encontrarRegistrosEstPorCpf(pageable, cpf);
 
         return ResponseEntity.ok().body(clienteVagaMapper.toPageAbleDto(clienteVaga));
     }
+
+
+
+    @Operation(summary = "Localizar os registros de estacionamentos do cliente logado",
+        description = "Localizar os registros de estacionamentos do cliente logado. " +
+            "Requisição exige uso de um bearer token.",
+        security = @SecurityRequirement(name = "security"),
+        parameters = {
+            @Parameter(in = QUERY, name = "page",
+                content = @Content(schema = @Schema(type = "integer", defaultValue = "0")),
+                description = "Representa a página retornada"
+            ),
+            @Parameter(in = QUERY, name = "size",
+                content = @Content(schema = @Schema(type = "integer", defaultValue = "5")),
+                description = "Representa o total de elementos por página"
+            ),
+            @Parameter(in = QUERY, name = "sort", hidden = true,
+                array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "dataEntrada,asc")),
+                description = "Campo padrão de ordenação 'dataEntrada,asc'. ")
+        },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
+                content = @Content(mediaType = " application/json;charset=UTF-8",
+                    schema = @Schema(implementation = EstacionamentoPageAbleDTO.class))),
+            @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de ADMIN",
+                content = @Content(mediaType = " application/json;charset=UTF-8",
+                    schema = @Schema(implementation = ErrorMessage.class)))
+        })
+    @GetMapping("/clientes")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<EstacionamentoPageAbleDTO> encontrarRegistrosPorId(@Parameter(hidden = true)
+                                                                             @PageableDefault(size = 3, sort = {"dataEntradaCV"})
+                                                                                 Pageable pageable,
+                                                                             @AuthenticationPrincipal JwtUserDetails userDetails){
+
+        Page<ClienteVagaProjection> clienteVaga = clienteVagaService.encontrarRegistrosEstPorId(pageable, userDetails.getId());
+
+        return ResponseEntity.ok().body(clienteVagaMapper.toPageAbleDto(clienteVaga));
+    }
+
+
+    @GetMapping("/relatorios")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<Void>consultarRelatorio(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user) throws IOException {
+        String cpf = clienteService.encontrarUsuarioPorId(user.getId()).getCpf();
+
+        jasperService.addParams("CPF", cpf);
+
+        byte[] relatorio = jasperService.gerarPdf();
+
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+        response.setHeader("Content-disposition", "inline;filename=" + System.currentTimeMillis() + ".pdf");
+        response.getOutputStream().write(relatorio);
+
+        return ResponseEntity.ok().build();
+    }
+
 
 
 

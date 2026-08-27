@@ -372,7 +372,67 @@ public class ClienteVagaIT {
     }
 
 
+    @Test
+    public void consultar_TodosOsDadosDoEstacionamentoViaId_RetornarEstacionamentoPageAbleDTOEStatus200(){
+
+        EstacionamentoPageAbleDTO responseBody = webTestClient
+            .get()
+            .uri("/api/v1/estacionamentos/clientes?size=1")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "eduarda.barbosa94@outlook.com", "123456"))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(EstacionamentoPageAbleDTO.class)
+            .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.content().size()).isEqualTo(1);
+        assertThat(responseBody.totalPages()).isEqualTo(1);
+
+    }
+
+    @Test
+    public void consultar_TodosOsDadosDoEstacionamentoViaid_SemRegistros_RetornarErrorMessageEStatus404(){
+
+        webTestClient
+            .get()
+            .uri("/api/v1/estacionamentos/clientes")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "felipe.pereira88@gmail.com", "123456"))
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody()
+            .jsonPath("path").isEqualTo("/api/v1/estacionamentos/clientes")
+            .jsonPath("method").isEqualTo("GET")
+            .jsonPath("statusCode").isEqualTo("404")
+            .jsonPath("statusText").exists()
+            .jsonPath("message").exists();
+    }
+
+
+
+    @Test
+    public void consultar_TodosOsDadosDoEstacionamentoViaid_SemAutorizacao_RetornarErrorMessageEStatus403(){
+
+        webTestClient
+            .get()
+            .uri("/api/v1/estacionamentos/clientes")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "admin@gmail.com", "123456"))
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody()
+            .jsonPath("path").isEqualTo("/api/v1/estacionamentos/clientes")
+            .jsonPath("method").isEqualTo("GET")
+            .jsonPath("statusCode").isEqualTo("403")
+            .jsonPath("statusText").exists()
+            .jsonPath("message").exists();
+    }
+
+
+
+
 
 
 
 }
+
+
+
