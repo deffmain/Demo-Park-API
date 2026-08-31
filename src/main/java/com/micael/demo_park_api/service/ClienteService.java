@@ -36,7 +36,7 @@ public class ClienteService {
     @Transactional(readOnly = true)
     public Cliente encontrarClientePorId(Long idCliente){
         return clienteRepository.findById(idCliente).
-            orElseThrow(() -> new EntityNotFoundException(String.format("Cliente com id = %s não encontrado.", idCliente)));
+            orElseThrow(() -> new EntityNotFoundException("Exception.entityNotFoundException.encontrarClientePorId", idCliente));
     }
 
     @Transactional(readOnly = true)
@@ -60,8 +60,7 @@ public class ClienteService {
     @Transactional(readOnly = true)
     public Cliente encontrarPorCpf(String cpf) {
         return clienteRepository.findByCpf(cpf).orElseThrow(
-            () -> new EntityNotFoundException(String.format("Cliente com o CPF:%s não encontrado.", cpf))
-        );
+            () -> new EntityNotFoundException("Exception.entityNotFoundException.encontrarPorCpf", cpf));
     }
 
 }

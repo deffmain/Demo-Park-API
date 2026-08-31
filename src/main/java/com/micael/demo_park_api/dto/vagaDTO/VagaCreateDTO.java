@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record VagaCreateDTO(
-    @NotBlank(message = "{NotBlank.VagaCreateDTO.codigoVaga}")
-    @Size(min = 4, max = 4, message = "{Size.VagaCreateDTO.codigoVaga}")
+    @NotBlank(message = "{NotBlank.vagaCreateDTO.codigoVaga}")
+    @Size(min = 4, max = 4, message = "{Size.vagaCreateDTO.codigoVaga}")
     String codigoVaga,
-    @NotNull(message = "{NotNull.VagaCreateDTO.statusVaga}")
+    @NotNull(message = "{NotNull.vagaCreateDTO.statusVaga}")
     Vaga.StatusVaga statusVaga
 ){}

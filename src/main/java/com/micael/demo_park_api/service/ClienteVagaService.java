@@ -26,16 +26,14 @@ public class ClienteVagaService {
     @Transactional(readOnly = true)
     public ClienteVaga procurarClienteViaRecibo(String recibo){
         return clienteVagaRepository.findByReciboCVAndDataSaidaCVIsNull(recibo).orElseThrow(
-            () -> new EntityNotFoundException(
-                String.format("Registro não econtrado para o recido N°%s, ou checkout já realizado.", recibo))
-        );
+            () -> new EntityNotFoundException("Exception.entityNotFoundException.procurarClienteViaRecibo", recibo));
     }
 
     @Transactional
     public Long estacionamentosRealizadosTotais(Long id){
 
         return clienteVagaRepository.countByIdClienteFK_IdClienteAndDataSaidaCVIsNotNull(id).orElseThrow(
-        () -> new EntityNotFoundException(String.format("Não forma encontrados registros para o ID:%s", id)));
+        () -> new EntityNotFoundException("Exception.entityNotFoundException.estacionamentosRealizadosTotais", id));
     }
 
     @Transactional(readOnly = true)
@@ -58,8 +56,7 @@ public class ClienteVagaService {
         Page<ClienteVagaProjection> estacionamentos = clienteVagaRepository.findAllByIdClienteFKIdUserFKIdUser(id, pageable);
 
         if(estacionamentos.isEmpty()){
-            throw new EntityNotFoundException(String.format("Nenhum registro encontrado encontrado para o CPF:%s", id));
-        }
+            throw new EntityNotFoundException("Exception.entityNotFoundException.encontrarRegistrosEstPorId", id);}
 
         return estacionamentos;
 
