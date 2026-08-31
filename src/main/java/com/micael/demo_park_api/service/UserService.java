@@ -40,13 +40,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public User encontrarUserPorId(Long idUser){
         return userRepository.findById(idUser)
-            .orElseThrow(()-> new EntityNotFoundException(String.format("Usuário com id = %s não encontrado.", idUser)));
+            .orElseThrow(()-> new EntityNotFoundException("Exception.entityNotFoundException.encontrarUserPorId", idUser));
     }
 
     @Transactional
     public User alterarSenha(Long idUser, PasswordDTO password){
 
-      User userPass = userRepository.findById(idUser).orElseThrow(() -> new EntityNotFoundException(String.format("Usuário com id = %s não encontrado.", idUser)));
+      User userPass = userRepository.findById(idUser).orElseThrow(() -> new EntityNotFoundException("Exception.entityNotFoundException.encontrarUserPorId", idUser));
 
       if (passwordEncoder.matches(password.currentPassword(), userPass.getPassword())){
           if(password.newPassword().equals(password.confirmNewPassword())){
@@ -77,7 +77,7 @@ public class UserService {
         return
             this.userRepository
             .findByUsername(username)
-                .orElseThrow(()-> new EntityNotFoundException(String.format("Usuário com username: %s não encontrado.", username)));
+                .orElseThrow(()-> new EntityNotFoundException("Exception.entityNotFoundException.buscarPorUsername", username));
     }
 
     @Transactional(readOnly = true)
