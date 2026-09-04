@@ -45,8 +45,11 @@ public class AuthController {
                     schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "422", description = "Campo(s) inválido(s)",
                 content = @Content(mediaType = "application/Json",
-                    schema = @Schema(implementation = ErrorMessage.class)))}
-    )
+                    schema = @Schema(implementation = ErrorMessage.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                content = @Content(mediaType = "application/Json",
+                    schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @PostMapping("/auth")
     public ResponseEntity<?> authentication(@RequestBody @Valid UserLoginDTO body, HttpServletRequest request){
         log.info("Processo de autenticação pelo login {}", body.username());

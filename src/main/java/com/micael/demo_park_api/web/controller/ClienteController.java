@@ -42,6 +42,7 @@ public class ClienteController {
     private final ClienteMapper clienteMapper;
 
 
+    //-------------//Start
     @Operation(summary = "Operacao utilizada para criar um cliente para um usuário.",
         description = "Requisição exige um bearer token, apenas um usuário que é CLIENTE pode utilizar o recurso de criação.",
         security = @SecurityRequirement(name  = "security"),
@@ -57,8 +58,11 @@ public class ClienteController {
                     schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "403", description = "Recurso não é permitido para usuário ADMIN",
                 content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorMessage.class)))}
-    )
+                    schema = @Schema(implementation = ErrorMessage.class))),
+                @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                        content = @Content(mediaType = "application/Json",
+                                schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @PostMapping
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<ClienteResponseDTO> createCliente(@Valid @RequestBody ClienteCreateDTO cliente,
@@ -75,8 +79,10 @@ public class ClienteController {
             .status(HttpStatus.CREATED)
             .body(new ClienteResponseDTO(clienteIn.getIdCliente(), clienteIn.getName(), clienteIn.getCpf()));
     }
+    //-------------//End
 
 
+    //-------------//Start
     @Operation(summary = "Operacao utilizada para realizar a leitura de um cliente, utilizando o id como parametro de busca.",
         description = "Requisição exige um bearer token, apenas um usuário que é ADMIN pode utilizar o recurso de leitura.",
         security = @SecurityRequirement(name  = "security"),
@@ -89,8 +95,11 @@ public class ClienteController {
                     schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "403", description = "Recurso não é permitido para usuário CLIENTE",
                 content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorMessage.class)))}
-    )
+                    schema = @Schema(implementation = ErrorMessage.class))),
+                @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                        content = @Content(mediaType = "application/Json",
+                                schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping("/{idCliente}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ClienteResponseDTO> procurarClientePorId(@PathVariable Long idCliente){
@@ -99,8 +108,10 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(new ClienteResponseDTO(cliente.getIdCliente(), cliente.getName(), cliente.getCpf()));
     }
+    //-------------//End
 
 
+    //-------------//Start
     @Operation(summary = "Recuperar lista de clientes",
         description = "Requisição exige uso de um bearer token. Acesso restrito a Role='ADMIN' ",
         security = @SecurityRequirement(name = "security"),
@@ -124,9 +135,11 @@ public class ClienteController {
             ),
             @ApiResponse(responseCode = "403", description = "Recurso não permitido ao perfil de CLIENTE",
                 content = @Content(mediaType = " application/json;charset=UTF-8",
-                    schema = @Schema(implementation = ErrorMessage.class))
-            )
-        })
+                    schema = @Schema(implementation = ErrorMessage.class))),
+                @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                        content = @Content(mediaType = "application/Json",
+                                schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ClientePageAbleDTO> acessarTodosClientes(@Parameter(hidden = true)
@@ -137,8 +150,10 @@ public class ClienteController {
         return ResponseEntity.ok(clienteMapper.toCliPageAble(clientes));
 
     }
+    //-------------//End
 
 
+    //-------------//Start
     @Operation(summary = "Operacao utilizada para um cliente acessar os detalhes do seu cadastro",
         description = "Requisição exige um bearer token, apenas um usuário que é CLIENTE pode utilizar o recurso de detalhes.",
         security = @SecurityRequirement(name  = "security"),
@@ -148,15 +163,19 @@ public class ClienteController {
                     schema = @Schema(implementation = ClienteResponseDTO.class))),
             @ApiResponse(responseCode = "403", description = "Recurso não é permitido para usuário ADMIN",
                 content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorMessage.class)))}
-    )
+                    schema = @Schema(implementation = ErrorMessage.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                content = @Content(mediaType = "application/Json",
+                    schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping("/detalhes")
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<ClienteResponseDTO> acessarDetalhes(@AuthenticationPrincipal JwtUserDetails userDetails){
-        Cliente cliente = clienteService.encontrarUsuarioPorId(userDetails.getId());
+        Cliente cliente = clienteService.encontrarClientePorIdUsuario(userDetails.getId());
 
         return ResponseEntity.ok(clienteMapper.toClienteResponseDTO(cliente));
 
     }
+    //-------------//End
 
 }

@@ -31,7 +31,9 @@ public class UserController {
 
     private final UserService userService;
 
-        @Operation(summary = "Operacao para o registro de usuarios.",
+
+    //-------------//Start
+    @Operation(summary = "Operacao para o registro de usuarios.",
             description = "Acesso não exige um bearer token",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Usuario criado com sucesso",
@@ -42,16 +44,21 @@ public class UserController {
                             schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "422", description = "Recurso nao processado por campo(s) invalido(s).",
                         content = @Content(mediaType = "application/Json",
-                            schema = @Schema(implementation = ErrorMessage.class)))}
-            )
+                            schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = RuntimeException.class)))
+    })
     @PostMapping
     public ResponseEntity<UserResponseDTO> registrarUsuario(@Valid @RequestBody UserRegisterDTO userBody) {
 
         User user = userService.registrarUsuario(userBody);
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole().getDisplayName()));
     }
+    //-------------//End
 
 
+    //-------------//Start
     @Operation(summary = "Operacao para realizar a leitura de um usuario, utilizando id como parametro de busca.",
            description = "Requisição exige um bearer token, acesso restrito a ADMIN/CLIENTE",
            security = @SecurityRequirement(name  = "security"),
@@ -64,8 +71,11 @@ public class UserController {
                             schema = @Schema(implementation = ErrorMessage.class))),
                    @ApiResponse(responseCode = "404", description = "Usuario com o id informado não encontrado",
                        content = @Content(mediaType = "application/Json",
-                           schema = @Schema(implementation = ErrorMessage.class)))}
-    )
+                           schema = @Schema(implementation = ErrorMessage.class))),
+                   @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                           content = @Content(mediaType = "application/json",
+                                   schema = @Schema(implementation = RuntimeException.class)))
+    })
     @GetMapping("/{idUser}")
     @PreAuthorize("hasRole('ADMIN') OR (hasRole('CLIENTE') AND #idUser == authentication.principal.id)")
     public ResponseEntity<UserResponseDTO> procurarUserPorId(@PathVariable Long idUser){
@@ -73,7 +83,11 @@ public class UserController {
         User user = this.userService.encontrarUserPorId(idUser);
         return ResponseEntity.status(HttpStatus.OK).body(new UserResponseDTO(user.getIdUser(), user.getUsername(), user.getRole().getDisplayName()));
     }
+    //-------------//End
 
+
+
+    //-------------//Start
     @Operation(summary = "Operacao para realizar a edicao da senha de acesso de um usuario.",
         description = "Requisição exige um bearer token, acesso restrito a ADMIN/CLIENTE",
         security = @SecurityRequirement(name  = "security"),
@@ -90,9 +104,12 @@ public class UserController {
                            schema = @Schema(implementation = ErrorMessage.class))),
                    @ApiResponse(responseCode = "403", description = "Usuario sem permissão para acessar o recurso",
                        content = @Content(mediaType = "application/Json",
-                           schema = @Schema(implementation =  ErrorMessage.class)))
-    }
-    )
+                           schema = @Schema(implementation =  ErrorMessage.class))),
+                   @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = RuntimeException.class)))
+
+    })
     @PatchMapping("/{idUser}")
     @PreAuthorize("hasAnyRole('ADMIN','CLIENTE') AND #idUser == authentication.principal.id")
     public ResponseEntity<Void> atualizarSenha(@PathVariable Long idUser,@Valid @RequestBody PasswordDTO newPassword){
@@ -100,8 +117,11 @@ public class UserController {
         userService.alterarSenha(idUser, newPassword);
         return ResponseEntity.noContent().build();
     }
+    //-------------//End
 
-    //-----
+
+
+    //-------------//Start
     @Operation(summary = "Operacao utilizada para realizar a leitura de todos os usuarios.",
         description = "Requisição exige um bearer token, acesso restrito a ADMIN",
         security = @SecurityRequirement(name  = "security"),
@@ -129,6 +149,7 @@ public class UserController {
 
         return ResponseEntity.ok(users);
     }
-    //----//
+    //-------------//End
+
 
 }

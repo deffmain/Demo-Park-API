@@ -57,6 +57,8 @@ public class EstacionamentoController {
     private final ClienteService clienteService;
     private final JasperService jasperService;
 
+
+    //-------------//Start
     @Operation(summary = "Operação de check-in", description = "Recurso para dar entrada de um veículo no estacionamento. " +
         "Requisição exige uso de um bearer token. Acesso restrito a usuarios com role 'ADMIN'",
         security = @SecurityRequirement(name = "security"),
@@ -75,8 +77,11 @@ public class EstacionamentoController {
                     schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de CLIENTE",
                 content = @Content(mediaType = " application/json;charset=UTF-8",
-                    schema = @Schema(implementation = ErrorMessage.class)))
-        })
+                    schema = @Schema(implementation = ErrorMessage.class))),
+                @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                        content = @Content(mediaType = "application/Json",
+                                schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @PostMapping("/check-in")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EstacionamentoResponseDTO> registrarEstacionamento(@Valid @RequestBody EstacionamentoCreateDTO etcDTO){
@@ -90,9 +95,10 @@ public class EstacionamentoController {
             .toUri();
         return ResponseEntity.created(location).body(clienteVagaMapper.toEstacionamentoResponseDTO(clienteVaga));
     }
+    //-------------//End
 
 
-
+    //-------------//Start
     @Operation(summary = "Operação para cunsulta de dados dos registros do estacionamento"
     ,description = "Recurso permite consultar os dados de um registro via recibo enviado na URI."+
         "Recuros exige uso de um Beare token. Acesso permitido a usuários com role 'ADMIN' e 'CLIENTE'"
@@ -104,9 +110,11 @@ public class EstacionamentoController {
                     schema = @Schema(implementation = EstacionamentoResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Registro com o código do recibo procurado não foi encontrado.",
                 content = @Content(mediaType = "application/json;charset=UTF-8",
-                    schema = @Schema(implementation = ErrorMessage.class)))
-        }
-    )
+                    schema = @Schema(implementation = ErrorMessage.class))),
+                @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                        content = @Content(mediaType = "application/Json",
+                                schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping("/check-in/{reciboCV}")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
     public ResponseEntity<EstacionamentoResponseDTO> procurarRegistroPorRecibo(@PathVariable String reciboCV){
@@ -115,9 +123,10 @@ public class EstacionamentoController {
 
         return ResponseEntity.ok().body(clienteVagaMapper.toEstacionamentoResponseDTO(clienteVaga));
     }
+    //-------------//End
 
 
-
+    //-------------//Start
     @Operation(summary = "Operação de check-out"
         ,description = "Recurso para dar saída de um veiculo do estacionamento"+
         "Recuros exige uso de um Beare token. Acesso restrito a usuários com role 'ADMIN'"
@@ -132,9 +141,11 @@ public class EstacionamentoController {
                     schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de CLIENTE.",
                 content = @Content(mediaType = "application/json;charset=UTF-8",
-                    schema = @Schema(implementation = ErrorMessage.class)))
-        }
-    )
+                    schema = @Schema(implementation = ErrorMessage.class))),
+                @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                        content = @Content(mediaType = "application/Json",
+                                schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @PutMapping("/check-out/{reciboCV}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EstacionamentoResponseDTO> checkout(@PathVariable String reciboCV){
@@ -143,8 +154,39 @@ public class EstacionamentoController {
 
         return ResponseEntity.ok().body(clienteVagaMapper.toEstacionamentoResponseDTO(clienteVaga));
     }
+    //-------------//End
 
 
+    //-------------//Start
+    @Operation(summary = "Localizar os registros de estacionamentos do cliente por CPF", description = "Localizar os " +
+            "registros de estacionamentos do cliente por CPF. Requisição exige uso de um bearer token.",
+            security = @SecurityRequirement(name = "security"),
+            parameters = {
+                    @Parameter(in = PATH, name = "cpf", description = "Nº do CPF referente ao cliente a ser consultado",
+                            required = true
+                    ),
+                    @Parameter(in = QUERY, name = "page", description = "Representa a página retornada",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "0"))
+                    ),
+                    @Parameter(in = QUERY, name = "size", description = "Representa o total de elementos por página",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "5"))
+                    ),
+                    @Parameter(in = QUERY, name = "sort", description = "Campo padrão de ordenação 'dataEntrada,asc'. ",
+                            array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "dataEntrada,asc")),
+                            hidden = true
+                    )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = EstacionamentoPageAbleDTO.class))),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de CLIENTE",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                            content = @Content(mediaType = "application/Json",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            })
     @GetMapping("/clientes/{cpf}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EstacionamentoPageAbleDTO> encontrarRegistrosCpf(@Parameter(hidden = true)
@@ -154,9 +196,11 @@ public class EstacionamentoController {
 
         return ResponseEntity.ok().body(clienteVagaMapper.toPageAbleDto(clienteVaga));
     }
+    //-------------//End
 
 
 
+    //-------------//Start
     @Operation(summary = "Localizar os registros de estacionamentos do cliente logado",
         description = "Localizar os registros de estacionamentos do cliente logado. " +
             "Requisição exige uso de um bearer token.",
@@ -180,8 +224,11 @@ public class EstacionamentoController {
                     schema = @Schema(implementation = EstacionamentoPageAbleDTO.class))),
             @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de ADMIN",
                 content = @Content(mediaType = " application/json;charset=UTF-8",
+                    schema = @Schema(implementation = ErrorMessage.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                content = @Content(mediaType = "application/Json",
                     schema = @Schema(implementation = ErrorMessage.class)))
-        })
+    })
     @GetMapping("/clientes")
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<EstacionamentoPageAbleDTO> encontrarRegistrosPorId(@Parameter(hidden = true)
@@ -193,12 +240,32 @@ public class EstacionamentoController {
 
         return ResponseEntity.ok().body(clienteVagaMapper.toPageAbleDto(clienteVaga));
     }
+    //-------------//End
 
 
+
+
+    //-------------//Start
+    @Operation(summary = "Relatório em PDF com os estacionamentos do cliente",
+            description = "Recurso para gerar um relatório com os estacionamentos do cliente. " +
+                    "Requisição exige uso de um bearer token.",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Relatório gerado com sucesso",
+                            content = @Content(mediaType = "application/pdf",
+                                    schema = @Schema(implementation = EstacionamentoResponseDTO.class))),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de ADMIN",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                            content = @Content(mediaType = "application/Json",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping("/relatorios")
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<Void>consultarRelatorio(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user) throws IOException {
-        String cpf = clienteService.encontrarUsuarioPorId(user.getId()).getCpf();
+
+        String cpf = clienteService.encontrarClientePorIdUsuario(user.getId()).getCpf();
 
         jasperService.addParams("CPF", cpf);
 
@@ -210,8 +277,7 @@ public class EstacionamentoController {
 
         return ResponseEntity.ok().build();
     }
-
-
+    //-------------//End
 
 
 }

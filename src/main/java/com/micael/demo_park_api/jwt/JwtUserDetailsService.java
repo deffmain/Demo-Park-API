@@ -16,7 +16,6 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userService.buscarPorUsername(username);
@@ -24,9 +23,9 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     public JwtToken getTokenAuthenticated(String username){
-       User.Role role = userService.buscarRolePorUsername(username);
 
-       return JwtUtils.createToken(username, role.name().substring("ROLE_".length()));
+       User user = userService.buscarPorUsername(username);
+       return JwtUtils.createToken(user.getIdUser(), username, user.getRole().getDisplayName());
 
     }
 }

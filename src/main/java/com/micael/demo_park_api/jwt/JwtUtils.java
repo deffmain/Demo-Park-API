@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Map;
 
 
 @Slf4j
@@ -36,7 +37,7 @@ public class JwtUtils {
         return Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static JwtToken createToken(String username, String role){
+    public static JwtToken createToken(Long id, String username, String role){
         Date issuedAt = new Date();
         Date limit = toExpireDtae(issuedAt);
 
@@ -45,7 +46,7 @@ public class JwtUtils {
             .subject(username)
             .issuedAt(issuedAt)
             .expiration(limit)
-            .claim("role", role)
+            .claims(Map.of("id",id,"role", role))
             .signWith(generatedKey())
             .compact();
 

@@ -1,6 +1,8 @@
 package com.micael.demo_park_api.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import tools.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import java.util.Arrays;
@@ -151,11 +154,12 @@ public class ApiExceptionHandler {
 
         String message = "Requisição com corpo mal formatado ou valor inválido";
 
-        if (ex.getCause() instanceof InvalidFormatException ife
-            && ife.getTargetType().isEnum()) {
-            String campo = ife.getPath().isEmpty() ? "campo"
-                : ife.getPath().getLast().getPropertyName();
+        if (ex.getCause() instanceof InvalidFormatException ife && ife.getTargetType().isEnum()) {
+
+            String campo = ife.getPath().isEmpty() ? "campo" : ife.getPath().getLast().getPropertyName();
+
             String validos = Arrays.toString(ife.getTargetType().getEnumConstants());
+
             message = String.format("Valor inválido para o campo '%s'. Valores aceitos: %s", campo, validos);
         }
 
@@ -165,5 +169,72 @@ public class ApiExceptionHandler {
             .contentType(MediaType.APPLICATION_JSON)
             .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_CONTENT, message));
     }
+
+    // Para @PathVariable / @RequestParam
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorMessage> constraintViolationException(ConstraintViolationException ex, HttpServletRequest request) {
+
+        HttpStatus status = HttpStatus.UNPROCESSABLE_CONTENT;
+
+        String field = "";
+        String message = "";
+
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+
+            String path = violation.getPropertyPath().toString();
+
+            field = path.contains(".") ? path.substring(path.lastIndexOf(".") + 1) : path;
+
+            var attributes = violation
+                    .getConstraintDescriptor()
+                    .getAttributes();
+
+            Object[] args = {
+                    attributes.get("min"),
+                    attributes.get("max")
+            };
+
+            message = messageSource.getMessage(
+                    violation.getMessage(),
+                    args,
+                    violation.getMessage(),
+                    request.getLocale());
+        }
+
+        return ResponseEntity.status(status).body(new ErrorMessage(request, status, field, message));
+    }
+
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ErrorMessage> noHandlerFoundException
+            (NoHandlerFoundException ex, HttpServletRequest request){
+
+        ErrorMessage error = new ErrorMessage(request, HttpStatus.NOT_FOUND,
+                HttpStatus.NOT_FOUND.getReasonPhrase());
+
+        log.error("Recurso não encontrado {} {} ", error ,ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(error);
+
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorMessage> httpRequestMethodNotSupportedException
+            (HttpRequestMethodNotSupportedException ex, HttpServletRequest request){
+
+        ErrorMessage error = new ErrorMessage(request, HttpStatus.NOT_FOUND,
+                HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
+
+        log.error("O método não está habilitado para essa requisição. {} {} ", error ,ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(error);
+
+    }
+
+
 
 }

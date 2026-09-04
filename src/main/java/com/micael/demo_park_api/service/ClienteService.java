@@ -51,11 +51,12 @@ public class ClienteService {
     }
 
     @Transactional(readOnly = true)
-    public Cliente encontrarUsuarioPorId(Long id) {
+    public Cliente encontrarClientePorIdUsuario(Long id) {
 
-        return clienteRepository.findByIdUserFKIdUser(id);
+        return clienteRepository.findByIdUserFKIdUser(id).orElseThrow(
+                () -> new EntityNotFoundException("Exception.entityNotFoundException.encontrarUsuarioPorId", id)
+        );
     }
-
 
     @Transactional(readOnly = true)
     public Cliente encontrarPorCpf(String cpf) {
