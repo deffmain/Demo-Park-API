@@ -11,7 +11,21 @@ import org.springframework.data.domain.Page;
 @Mapper
 public interface ClienteMapper {
 
-    ClientePageAbleDTO toCliPageAble(Page<ClienteProjection> clienteProjections);
 
-    ClienteResponseDTO toClienteResponseDTO(Cliente cliente);
+    ClienteResponseDTO toClienteResponseDTO(ClienteProjection cliente);
+
+    ClienteResponseDTO clienteToResponseDTO(Cliente cliente);
+
+    default<T> ClientePageAbleDTO<T> toclientePageAbleDTO(Page<T> page){
+        return new ClientePageAbleDTO<>(
+                page.getContent(),
+                page.isFirst(),
+                page.isLast(),
+                page.getNumber(),
+                page.getSize(),
+                page.getNumberOfElements(),
+                page.getTotalPages(),
+                page.getTotalElements()
+        );
+    }
 }

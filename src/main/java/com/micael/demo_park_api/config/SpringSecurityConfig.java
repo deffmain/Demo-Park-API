@@ -1,9 +1,7 @@
 package com.micael.demo_park_api.config;
 
-import com.micael.demo_park_api.domain.User;
 import com.micael.demo_park_api.jwt.JwtAuthenticationEntryPoint;
 import com.micael.demo_park_api.jwt.JwtAuthorizationFilter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

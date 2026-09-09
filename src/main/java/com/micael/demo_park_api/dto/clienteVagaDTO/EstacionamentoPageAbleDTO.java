@@ -1,12 +1,14 @@
 package com.micael.demo_park_api.dto.clienteVagaDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
-public record EstacionamentoPageAbleDTO (
+public record EstacionamentoPageAbleDTO<T> (
 
-    List content,
+    List<T> content,
 
     boolean first,
 
@@ -23,4 +25,12 @@ public record EstacionamentoPageAbleDTO (
     int totalPages,
 
     long totalElements
-) {}
+) {
+    @ArraySchema(
+            schema = @Schema(implementation = EstacionamentoResponseDTO.class)
+    )
+    @Override
+    public List<T> content() {
+        return content;
+    }
+}

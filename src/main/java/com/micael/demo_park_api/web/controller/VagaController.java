@@ -97,7 +97,7 @@ public class VagaController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VagaResponseDTO> consultarvaga(@PathVariable
                                                              @Size(min = 4, max = 4, message = "{Size.vagaController.registrarVaga}")
-                                                             @Pattern(regexp = "A[A-Z]-\\d{2}$", message = "{Pattern.vagaController.registrarVaga}")
+                                                             @Pattern(regexp = "^[A-Z]-\\d{2}$", message = "{Pattern.vagaController.registrarVaga}")
                                                              @NotBlank(message = "{NotBlank.vagaController.registrarVaga}")
                                                              String vagaCodigo){
         Vaga vaga = vagaService.procurarPorCodigo(vagaCodigo);

@@ -23,5 +23,4 @@ public record EstacionamentoResponseDTO(
     String vagaCodigo,
     BigDecimal valorCV,
     BigDecimal descontoCV
-
 ){}

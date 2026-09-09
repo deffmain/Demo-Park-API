@@ -5,6 +5,7 @@ import com.micael.demo_park_api.domain.Cliente;
 import com.micael.demo_park_api.dto.clienteDTO.ClienteCreateDTO;
 import com.micael.demo_park_api.dto.clienteDTO.ClientePageAbleDTO;
 import com.micael.demo_park_api.dto.clienteDTO.ClienteResponseDTO;
+import com.micael.demo_park_api.dto.clienteVagaDTO.EstacionamentoResponseDTO;
 import com.micael.demo_park_api.dto.mapStruct.ClienteMapper;
 import com.micael.demo_park_api.exception.ErrorMessage;
 import com.micael.demo_park_api.jwt.JwtUserDetails;
@@ -31,7 +32,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
-@Tag(name = "Clientes", description = "Contem todas as operacoes relativas ao recurso de um cliente")
+@Tag(name = "Clientes", description = "Contem todas as operações relativas ao recurso de um cliente")
 @RestController
 @RequestMapping("/api/v1/clientes")
 @RequiredArgsConstructor
@@ -131,7 +132,7 @@ public class ClienteController {
         responses = {
             @ApiResponse(responseCode = "200", description = "Usuarios encontrados com sucesso",
                 content = @Content(mediaType = " application/json;charset=UTF-8",
-                    schema = @Schema(implementation = ClienteResponseDTO.class))
+                    schema = @Schema(implementation = ClientePageAbleDTO.class))
             ),
             @ApiResponse(responseCode = "403", description = "Recurso não permitido ao perfil de CLIENTE",
                 content = @Content(mediaType = " application/json;charset=UTF-8",
@@ -142,12 +143,12 @@ public class ClienteController {
     })
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ClientePageAbleDTO> acessarTodosClientes(@Parameter(hidden = true)
+    public ResponseEntity<ClientePageAbleDTO<ClienteResponseDTO>> acessarTodosClientes(@Parameter(hidden = true)
                                                                    @PageableDefault(size = 5, sort = {"idCliente"}) Pageable pageable){
-        Page<ClienteProjection> clientes = clienteService
+        Page<ClienteResponseDTO> clientes = clienteService
             .encontrarTodosClientes(pageable);
 
-        return ResponseEntity.ok(clienteMapper.toCliPageAble(clientes));
+        return ResponseEntity.ok(clienteMapper.toclientePageAbleDTO(clientes));
 
     }
     //-------------//End
@@ -173,7 +174,7 @@ public class ClienteController {
     public ResponseEntity<ClienteResponseDTO> acessarDetalhes(@AuthenticationPrincipal JwtUserDetails userDetails){
         Cliente cliente = clienteService.encontrarClientePorIdUsuario(userDetails.getId());
 
-        return ResponseEntity.ok(clienteMapper.toClienteResponseDTO(cliente));
+        return ResponseEntity.ok(clienteMapper.clienteToResponseDTO(cliente));
 
     }
     //-------------//End

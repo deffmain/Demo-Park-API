@@ -23,9 +23,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 
 
@@ -37,6 +39,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -46,9 +49,11 @@ import java.net.URI;
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
+@Tag(name = "Estacionamentos", description = "Contem todas as operações relativas a leitura, check-in e check-out do estacionamento.")
 @RestController
 @RequestMapping("api/v1/estacionamentos")
 @RequiredArgsConstructor
+@Validated
 public class EstacionamentoController {
 
     private final EstacionamentoService estacionamentoService;
@@ -93,7 +98,7 @@ public class EstacionamentoController {
             .path("/{recibo}")
             .buildAndExpand(clienteVaga.getReciboCV())
             .toUri();
-        return ResponseEntity.created(location).body(clienteVagaMapper.toEstacionamentoResponseDTO(clienteVaga));
+        return ResponseEntity.created(location).body(clienteVagaMapper.clienteVagaToEstacionamentoResponseDTO(clienteVaga));
     }
     //-------------//End
 
@@ -113,15 +118,21 @@ public class EstacionamentoController {
                     schema = @Schema(implementation = ErrorMessage.class))),
                 @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
                         content = @Content(mediaType = "application/Json",
+                                schema = @Schema(implementation = ErrorMessage.class))),
+                @ApiResponse(responseCode = "403", description = "Falha ao tentar acessar um recibo que não pertence ao cliente.",
+                        content = @Content(mediaType = "application/Json",
                                 schema = @Schema(implementation = ErrorMessage.class)))
     })
     @GetMapping("/check-in/{reciboCV}")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
-    public ResponseEntity<EstacionamentoResponseDTO> procurarRegistroPorRecibo(@PathVariable String reciboCV){
+    public ResponseEntity<EstacionamentoResponseDTO> procurarRegistroPorRecibo(@PathVariable
+                                                                                   @Pattern(regexp = "^\\d{8}-\\d{6}$", message = "Pattern.estacionamentoController.procurarRegistroPorRecibo")
+                                                                                   @NotBlank(message = "NotBlank.estacionamentoController.procurarRegistroPorRecibo")
+                                                                                   String reciboCV){
 
         ClienteVaga clienteVaga = clienteVagaService.procurarClienteViaRecibo(reciboCV);
 
-        return ResponseEntity.ok().body(clienteVagaMapper.toEstacionamentoResponseDTO(clienteVaga));
+        return ResponseEntity.ok().body(clienteVagaMapper.clienteVagaToEstacionamentoResponseDTO(clienteVaga));
     }
     //-------------//End
 
@@ -152,7 +163,7 @@ public class EstacionamentoController {
 
         ClienteVaga clienteVaga = estacionamentoService.checkout(reciboCV);
 
-        return ResponseEntity.ok().body(clienteVagaMapper.toEstacionamentoResponseDTO(clienteVaga));
+        return ResponseEntity.ok().body(clienteVagaMapper.clienteVagaToEstacionamentoResponseDTO(clienteVaga));
     }
     //-------------//End
 
@@ -189,12 +200,18 @@ public class EstacionamentoController {
             })
     @GetMapping("/clientes/{cpf}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EstacionamentoPageAbleDTO> encontrarRegistrosCpf(@Parameter(hidden = true)
-    @PageableDefault(size = 3, sort = {"dataEntradaCV"})Pageable pageable, @PathVariable String cpf){
+    public ResponseEntity<EstacionamentoPageAbleDTO<EstacionamentoResponseDTO>> encontrarRegistrosCpf(
+            @Parameter(hidden = true)
+            @PageableDefault(size = 3, sort = {"dataEntradaCV"})
+            Pageable pageable,
+            @PathVariable String cpf) {
 
-        Page<ClienteVagaProjection> clienteVaga = clienteVagaService.encontrarRegistrosEstPorCpf(pageable, cpf);
+        Page<EstacionamentoResponseDTO> clienteVaga =
+                clienteVagaService.encontrarRegistrosEstPorCpf(pageable, cpf);
 
-        return ResponseEntity.ok().body(clienteVagaMapper.toPageAbleDto(clienteVaga));
+        return ResponseEntity.ok(
+                clienteVagaMapper.toPageAbleDto(clienteVaga)
+        );
     }
     //-------------//End
 
@@ -231,12 +248,14 @@ public class EstacionamentoController {
     })
     @GetMapping("/clientes")
     @PreAuthorize("hasRole('CLIENTE')")
-    public ResponseEntity<EstacionamentoPageAbleDTO> encontrarRegistrosPorId(@Parameter(hidden = true)
+    public ResponseEntity<EstacionamentoPageAbleDTO<EstacionamentoResponseDTO>> encontrarRegistrosPorId(@Parameter(hidden = true)
                                                                              @PageableDefault(size = 3, sort = {"dataEntradaCV"})
                                                                                  Pageable pageable,
                                                                              @AuthenticationPrincipal JwtUserDetails userDetails){
 
-        Page<ClienteVagaProjection> clienteVaga = clienteVagaService.encontrarRegistrosEstPorId(pageable, userDetails.getId());
+        Page<EstacionamentoResponseDTO> clienteVaga =
+                clienteVagaService.
+                        encontrarRegistrosEstPorId(pageable, userDetails.getId());
 
         return ResponseEntity.ok().body(clienteVagaMapper.toPageAbleDto(clienteVaga));
     }

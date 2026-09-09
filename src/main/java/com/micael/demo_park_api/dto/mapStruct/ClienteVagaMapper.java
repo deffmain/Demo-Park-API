@@ -9,15 +9,36 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 
-@Mapper(componentModel = "Spring")
+@Mapper(componentModel = "spring")
 public interface ClienteVagaMapper {
 
     @Mapping(target = "idClienteFK", ignore = true)
-    ClienteVaga toClienteVaga(EstacionamentoCreateDTO estacionamentoCreateDTO);
+    ClienteVaga toClienteVaga(
+            EstacionamentoCreateDTO estacionamentoCreateDTO
+    );
 
     @Mapping(target = "cpf", source = "idClienteFK.cpf")
-    EstacionamentoResponseDTO toEstacionamentoResponseDTO(ClienteVaga clienteVaga);
+    EstacionamentoResponseDTO clienteVagaToEstacionamentoResponseDTO(
+            ClienteVaga clienteVaga
+    );
 
-    EstacionamentoPageAbleDTO toPageAbleDto(Page<ClienteVagaProjection> clienteVaga);
+    @Mapping(target = "cpf", source = "idClienteFKCpf")
+    @Mapping(target = "vagaCodigo", source = "idVagaFKCodigoVaga")
+    EstacionamentoResponseDTO toEstacionamentoResponseDTO(
+            ClienteVagaProjection projection
+    );
 
+    default <T> EstacionamentoPageAbleDTO<T> toPageAbleDto(Page<T> page) {
+        return new EstacionamentoPageAbleDTO<>(
+                page.getContent(),
+                page.isFirst(),
+                page.isLast(),
+                page.getNumber(),
+                page.getSize(),
+                page.getNumberOfElements(),
+                page.getTotalPages(),
+                page.getTotalElements()
+        );
+    }
 }
+

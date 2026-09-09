@@ -1,6 +1,8 @@
 package com.micael.demo_park_api.service;
 
 import com.micael.demo_park_api.domain.Cliente;
+import com.micael.demo_park_api.dto.clienteDTO.ClienteResponseDTO;
+import com.micael.demo_park_api.dto.mapStruct.ClienteMapper;
 import com.micael.demo_park_api.exception.CpfUniqueViolationException;
 import com.micael.demo_park_api.exception.EntityNotFoundException;
 import com.micael.demo_park_api.repository.ClienteRepository;
@@ -21,6 +23,7 @@ public class ClienteService {
 
 
     private final ClienteRepository clienteRepository;
+    private final ClienteMapper clienteMapper;
 
     @Transactional
     public Cliente createCliente(Cliente cliente){
@@ -40,14 +43,14 @@ public class ClienteService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ClienteProjection> encontrarTodosClientes(Pageable pageable){
+    public Page<ClienteResponseDTO> encontrarTodosClientes(Pageable pageable){
 
         Page<ClienteProjection> clientes = clienteRepository.findAllCliente(pageable);
 
         if(clientes.isEmpty()){
             throw new RuntimeException("Nenhum cliente encontrado");
         }
-        return clientes;
+        return clientes.map(clienteMapper::toClienteResponseDTO);
     }
 
     @Transactional(readOnly = true)

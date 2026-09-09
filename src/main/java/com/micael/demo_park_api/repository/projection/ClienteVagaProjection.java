@@ -1,6 +1,5 @@
 package com.micael.demo_park_api.repository.projection;
 
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -16,5 +15,6 @@ public interface ClienteVagaProjection {
      LocalDateTime getDataSaidaCV();
      BigDecimal getValorCV();
      BigDecimal getDescontoCV();
-     Long getIdClienteFKCpf();
+     String getIdClienteFKCpf();
+     String getIdVagaFKCodigoVaga();
 }

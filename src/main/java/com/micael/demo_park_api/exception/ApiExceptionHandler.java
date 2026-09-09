@@ -57,23 +57,6 @@ public class ApiExceptionHandler {
     }
 
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorMessage> handleHttpRequestMethodNotSupportedException(
-        HttpRequestMethodNotSupportedException ex,
-        HttpServletRequest request) {
-
-        log.error("Api error - ", ex);
-        return ResponseEntity
-            .status(HttpStatus.METHOD_NOT_ALLOWED)
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(new ErrorMessage(
-                request,
-                HttpStatus.METHOD_NOT_ALLOWED,
-                "Método HTTP não suportado para esta rota"
-            ));
-    }
-
-
     @ExceptionHandler(CodigoUniqueViolationException.class)
     public ResponseEntity<ErrorMessage> codigoUniqueViolationExceptionPersonalized
             (CodigoUniqueViolationException ex, HttpServletRequest request){
