@@ -148,11 +148,11 @@ public class VagaIT {
 
 
     @Test
-    public void localizarVaga_ComURIInvalidaEUsuarioAutorizado_RetornarErrorMessageEStatus404(){
+    public void localizarVaga_ComCodigoInexistenteEUsuarioAutorizado_RetornarErrorMessageEStatus404(){
 
         ErrorMessage responseBody = webTestClient
             .get()
-            .uri("/api/v1/vagas/{codigoVaga}", "Z-##")
+            .uri("/api/v1/vagas/{codigoVaga}", "Z-99")
             .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "admin@gmail.com", "123456"))
             .exchange()
             .expectStatus().isNotFound()
@@ -161,6 +161,22 @@ public class VagaIT {
 
         assertThat(responseBody).isNotNull();
         assertThat(responseBody.getStatusCode()).isEqualTo(404);
+    }
+
+    @Test
+    public void localizarVaga_ComCodigoForaDoFormatoEUsuarioAutorizado_RetornarErrorMessageEStatus422(){
+
+        ErrorMessage responseBody = webTestClient
+            .get()
+            .uri("/api/v1/vagas/{codigoVaga}", "Z-##")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "admin@gmail.com", "123456"))
+            .exchange()
+            .expectStatus().isEqualTo(422)
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatusCode()).isEqualTo(422);
     }
 
 

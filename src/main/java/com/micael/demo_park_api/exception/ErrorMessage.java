@@ -65,8 +65,9 @@ public class ErrorMessage {
     private void addErros(BindingResult result, MessageSource messageSource, Locale locale) {
         this.erros = new HashMap<>();
         for (FieldError fieldError : result.getFieldErrors()) {
-            String code = fieldError.getCodes()[0];
-            String message = messageSource.getMessage(code, fieldError.getArguments(),locale);
+            // Tenta todos os codigos do erro (ex.: Email.userRegisterDTO.username, Email.username, Email)
+            // e, se nenhum existir no messages.properties, usa a mensagem padrao da anotacao.
+            String message = messageSource.getMessage(fieldError, locale);
             this.erros.put(fieldError.getField(),message);
 
         }
