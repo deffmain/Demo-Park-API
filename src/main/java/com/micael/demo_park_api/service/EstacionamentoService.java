@@ -5,6 +5,7 @@ import com.micael.demo_park_api.domain.ClienteVaga;
 import com.micael.demo_park_api.domain.Vaga;
 import com.micael.demo_park_api.dto.clienteVagaDTO.EstacionamentoCreateDTO;
 import com.micael.demo_park_api.dto.mapStruct.ClienteVagaMapper;
+import com.micael.demo_park_api.exception.PlacaEstacionadaException;
 import com.micael.demo_park_api.util.EstacionamentoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,10 @@ public class EstacionamentoService {
 
     @Transactional
     public ClienteVaga checkIn(EstacionamentoCreateDTO etcDTO){
+
+        if(clienteVagaService.veiculoEstacionado(etcDTO.placaCV())){
+            throw new PlacaEstacionadaException(etcDTO.placaCV());
+        }
 
         ClienteVaga clienteVaga = clienteVagaMapper.toClienteVaga(etcDTO);
 

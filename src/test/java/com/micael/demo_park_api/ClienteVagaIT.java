@@ -67,6 +67,56 @@ public class ClienteVagaIT {
     }
 
     @Test
+    public void fazerCheckIn_ComVeiculoJaEstacionado_RetornarErrorMessageEStatus409(){
+
+        // LFJ-1023 tem um registro sem check-out no clienteVagas-insert.sql
+        webTestClient
+            .post()
+            .uri("/api/v1/estacionamentos/check-in")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "admin@gmail.com", "123456"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(
+                new EstacionamentoCreateDTO(
+                    "LFJ-1023",
+                    "HONDA",
+                    "CIVIC",
+                    "PRETO",
+                    "57386171005"))
+            .exchange()
+            .expectStatus().isEqualTo(409)
+            .expectBody()
+            .jsonPath("statusCode").isEqualTo("409")
+            .jsonPath("message").exists();
+    }
+
+    @Test
+    public void fazerCheckIn_ComVeiculoQueJaSaiu_RetornarStatus201(){
+
+        // a placa pode voltar depois do check-out: o historico nao bloqueia a placa
+        webTestClient
+            .put()
+            .uri("/api/v1/estacionamentos/check-out/{recibo}", "20260818-104453")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "admin@gmail.com", "123456"))
+            .exchange()
+            .expectStatus().isOk();
+
+        webTestClient
+            .post()
+            .uri("/api/v1/estacionamentos/check-in")
+            .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "admin@gmail.com", "123456"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(
+                new EstacionamentoCreateDTO(
+                    "LFJ-1023",
+                    "HONDA",
+                    "CIVIC",
+                    "PRETO",
+                    "57386171005"))
+            .exchange()
+            .expectStatus().isCreated();
+    }
+
+    @Test
     public void fazerCheckIn_ComDadosInvalidos_RetornarErrorMessageEStatus422(){
 
        webTestClient

@@ -31,7 +31,7 @@ public class ClienteVaga {
     @Column(nullable = false,unique = true, length = 15)
     private String reciboCV;
 
-    @Column(nullable = false,unique = true, length = 45)
+    @Column(nullable = false, length = 45)
     private String placaCV;
 
     @Column(nullable = false,length = 15)

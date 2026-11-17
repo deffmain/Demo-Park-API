@@ -74,6 +74,21 @@ public class ApiExceptionHandler {
     }
 
 
+    @ExceptionHandler(PlacaEstacionadaException.class)
+    public ResponseEntity<ErrorMessage> placaEstacionadaException
+            (PlacaEstacionadaException ex, HttpServletRequest request){
+
+        String message = messageSource.getMessage("Exception.placaEstacionadaException",
+                new Object[]{ex.getPlaca()},
+                request.getLocale());
+
+        log.error("Api error - ", ex);
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.CONFLICT, message));
+    }
+
     @ExceptionHandler({UsernameUniqueViolationException.class,CpfUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationExceptionPersonalized
         (RuntimeException ex, HttpServletRequest request){

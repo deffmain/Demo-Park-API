@@ -45,3 +45,4 @@ INSERT INTO clientes_vagas_tb(id_cliente_vaga, corcv, data_entradacv,data_saidac
 VALUES(3,'Cinza','2026-08-19 11:50:39.028952',null,null,'Fiat','Argo','HOA-4632','20260819-115039',null,9,3);
 INSERT INTO clientes_vagas_tb(id_cliente_vaga, corcv, data_entradacv, data_saidacv, descontocv, marcacv, modelocv, placacv, recibocv, valorcv, id_vaga, id_cliente_fk)
 VALUES(4,'Branco','2026-09-18 12:00:00.075124',null,null,'Bmw','320i','GSK-4424','20260918-120000',null,7,4);
+ALTER TABLE clientes_vagas_tb ALTER COLUMN id_cliente_vaga RESTART WITH 201;

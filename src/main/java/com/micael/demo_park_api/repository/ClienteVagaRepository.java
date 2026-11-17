@@ -15,6 +15,8 @@ public interface ClienteVagaRepository extends JpaRepository<ClienteVaga, Long> 
 
     Optional<ClienteVaga> findByReciboCVAndDataSaidaCVIsNull(String recibo);
 
+    boolean existsByPlacaCVAndDataSaidaCVIsNull(String placaCV);
+
     Optional<Long> countByIdClienteFK_IdClienteAndDataSaidaCVIsNotNull(Long id);
 
     Page<ClienteVagaProjection> findAllByIdClienteFKCpf(String cpf, Pageable pageable);

@@ -48,6 +48,11 @@ public class ClienteVagaService {
         return cv;
     }
 
+    @Transactional(readOnly = true)
+    public boolean veiculoEstacionado(String placa){
+        return clienteVagaRepository.existsByPlacaCVAndDataSaidaCVIsNull(placa);
+    }
+
     @Transactional
     public Long estacionamentosRealizadosTotais(Long id){
 
