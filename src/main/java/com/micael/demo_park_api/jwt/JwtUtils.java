@@ -5,6 +5,8 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -14,20 +16,21 @@ import java.util.Map;
 
 
 @Slf4j
+@Component
 public class JwtUtils {
 
     public static final String JWT_BEARER = "Bearer ";
     public static final String JWT_AUTHORIZATION = "Authorization";
-    public static final String SECRET_KEY = "***CHAVE-REMOVIDA***";
     public static final long EXPIRE_DAYS = 0;
     public static final long EXPIRE_HOURS = 0;
     public static final long EXPIRE_MINUTES = 30;
 
-    private JwtUtils(){
-    }
+    private final SecretKey secretKey;
 
-    private static SecretKey generatedKey(){
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    // A chave vem da propriedade jwt.secret (variavel de ambiente JWT_SECRET), nunca do codigo.
+    // Keys.hmacShaKeyFor exige no minimo 32 bytes e falha na subida da aplicacao se for menor.
+    public JwtUtils(@Value("${jwt.secret}") String secret){
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
 
@@ -37,7 +40,7 @@ public class JwtUtils {
         return Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static JwtToken createToken(Long id, String username, String role){
+    public JwtToken createToken(Long id, String username, String role){
         Date issuedAt = new Date();
         Date limit = toExpireDtae(issuedAt);
 
@@ -47,16 +50,16 @@ public class JwtUtils {
             .issuedAt(issuedAt)
             .expiration(limit)
             .claims(Map.of("id",id,"role", role))
-            .signWith(generatedKey())
+            .signWith(secretKey)
             .compact();
 
         return new JwtToken(token);
     }
 
-    private static Claims getClaimsFromToken(String token){
+    private Claims getClaimsFromToken(String token){
         try{
             return Jwts.parser()
-                .verifyWith(generatedKey())
+                .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(refactorToken(token))
                 .getPayload();
@@ -67,15 +70,15 @@ public class JwtUtils {
         return null;
     }
 
-    public static String getUsernameFromToken(String token){
+    public String getUsernameFromToken(String token){
        Claims claims = getClaimsFromToken(token);
        return claims != null ? claims.getSubject() : null;
     }
 
-    public static Boolean isTokenValid(String token){
+    public Boolean isTokenValid(String token){
         try{
             Jwts.parser()
-                .verifyWith(generatedKey())
+                .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(refactorToken(token));
             return true;
