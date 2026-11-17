@@ -2,6 +2,7 @@ package com.micael.demo_park_api.web.controller;
 
 
 
+import java.util.Map;
 import com.micael.demo_park_api.domain.ClienteVaga;
 import com.micael.demo_park_api.dto.clienteVagaDTO.EstacionamentoCreateDTO;
 import com.micael.demo_park_api.dto.clienteVagaDTO.EstacionamentoPageAbleDTO;
@@ -286,9 +287,7 @@ public class EstacionamentoController {
 
         String cpf = clienteService.encontrarClientePorIdUsuario(user.getId()).getCpf();
 
-        jasperService.addParams("CPF", cpf);
-
-        byte[] relatorio = jasperService.gerarPdf();
+        byte[] relatorio = jasperService.gerarPdf(Map.of("CPF", cpf));
 
         response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         response.setHeader("Content-disposition", "inline;filename=" + System.currentTimeMillis() + ".pdf");
